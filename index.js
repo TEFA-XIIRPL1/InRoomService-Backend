@@ -27,5 +27,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`listening at http://localhost:${port}`)
 });
