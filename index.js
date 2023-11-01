@@ -12,7 +12,7 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  res.json({'message': 'ok'});
+  res.json({'message': 'dedek wawan berjalan dengan benar'});
 })
 
 app.use('/in-room-service', inRoomServiceRouter);
