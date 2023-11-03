@@ -1,0 +1,559 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESS
+  DELIVERED
+  DONE
+  CANCEL
+}
+
+enum RoomType {
+  STANDARD
+  DELUXE
+  FAMILY
+}
+
+// Front Office Area ==========================================================
+
+model Guest {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  contact             String
+  username            String
+  password            String
+  orders              Order[]
+  CanceledReservation CanceledReservation[]
+}
+
+// This table is for admin & mitra (hotel)
+model Role {
+  id         Int      @id @default(autoincrement())
+  name       String
+  users      User[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  name           String
+  gender         Gender
+  phone          String
+  picture        String
+  birthday       DateTime
+  nik            String
+  email          String          @unique
+  username       String          @unique
+  password       String
+  role           Role            @relation(fields: [roleId], references: [id])
+  roleId         Int
+  cleaningSheets CleaningSheet[]
+  cleanRooms     CleanRoom[]
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  DirtyRoom      DirtyRoom[]
+  OooRoom        OooRoom[]
+}
+
+model RoomCapacity {
+  id            Int      @id @default(autoincrement())
+  adultCapacity Int
+  childCapacity Int
+  manyRoom      Int
+  Room          Room[]
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model RoomStatus {
+  id           Int    @id @default(autoincrement())
+  description  String
+  hexCode      String
+  availHexCode String
+  Room         Room[]
+}
+
+model RoomRate {
+  id   Int    @id @default(autoincrement())
+  rate Float
+  Room Room[]
+}
+
+model Room {
+  id                  Int                   @id @default(autoincrement())
+  roomType            RoomType
+  roomImage           String
+  roomStatus          RoomStatus            @relation(fields: [roomStatusId], references: [id])
+  roomStatusId        Int
+  roomCode            Int
+  category            String
+  floor               Int
+  i                   Int
+  occupied_status     Boolean
+  overlook            String
+  description         String
+  bedSetup            String
+  connecting          String
+  roomCapacity        RoomCapacity          @relation(fields: [roomCapacityId], references: [id])
+  roomCapacityId      Int
+  rateCode            RoomRate              @relation(fields: [rateCodeId], references: [id])
+  rateCodeId          Int
+  roomFacilities      RoomFacility[]
+  order               Order[]
+  resvRooms           ResvRoom[]
+  LogReservation      LogReservation[]
+  CanceledReservation CanceledReservation[]
+  Discrepancy         Discrepancy[]
+  cleaningSheets      CleaningSheet[]
+  cleanRooms          CleanRoom[]
+  DirtyRoom           DirtyRoom[]
+  OooRoom             OooRoom[]
+}
+
+model RoomFacility {
+  id         Int      @id @default(autoincrement())
+  name       String
+  room       Room     @relation(fields: [roomId], references: [id])
+  roomId     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Reservation {
+  id                  Int                   @id @default(autoincrement())
+  agencyName          String
+  resvQty             ResvQty               @relation(fields: [resvQtyId], references: [id])
+  resvQtyId           Int
+  resvStatus          ResvStatus            @relation(fields: [resvStatusId], references: [id])
+  resvStatusId        Int
+  groupReservation    Boolean
+  finishedReservation Boolean
+  currency            String
+  code                String
+  reserver            Reserver              @relation(fields: [reserverId], references: [id])
+  reserverId          Int
+  fixRate             Boolean
+  m                   String
+  l                   String
+  argtCode            String
+  day                 Int
+  night               Int
+  arrivalDate         DateTime
+  departureDate       DateTime
+  checkoutDate        DateTime?
+  canceledDate        DateTime?
+  resvFlights         ResvFlight[]
+  resvRooms           ResvRoom[]
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  Deposit             Deposit[]
+  LogReservation      LogReservation[]
+  CanceledReservation CanceledReservation[]
+  Voucher             Voucher[]
+  Discrepancy         Discrepancy[]
+  cleaningSheets      CleaningSheet[]
+  cleanRooms          CleanRoom[]
+  DirtyRoom           DirtyRoom[]
+  OooRoom             OooRoom[]
+}
+
+model Reserver {
+  id             Int              @id @default(autoincrement())
+  groupName      String?
+  kCard          String
+  nation         String
+  purpose        String?
+  resident       String
+  guestId        Int
+  reservations   Reservation[]
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  LogReservation LogReservation[]
+}
+
+model ResvFlight {
+  id              Int         @id @default(autoincrement())
+  reservation     Reservation @relation(fields: [reservationId], references: [id])
+  reservationId   Int
+  arrivalFlight   DateTime
+  departureFlight DateTime
+  pickedUp        Boolean
+  drop            Boolean
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+}
+
+model ResvRoom {
+  id            Int         @id @default(autoincrement())
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  quantity      Int
+  note          String?     @db.Text
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+model ResvQty {
+  id                  Int                   @id @default(autoincrement())
+  manyAdult           Int
+  manyChild           Int
+  manyRoom            Int
+  reservation         Reservation[]
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  CanceledReservation CanceledReservation[]
+}
+
+model ResvStatus {
+  id                  Int                   @id @default(autoincrement())
+  desc                String                @db.Text
+  hexCode             String
+  reservation         Reservation[]
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  LogReservation      LogReservation[]
+  CanceledReservation CanceledReservation[]
+  cleaningSheets      CleaningSheet[]
+  cleanRooms          CleanRoom[]
+  DirtyRoom           DirtyRoom[]
+  OooRoom             OooRoom[]
+}
+
+model Voucher {
+  id             Int         @id @default(autoincrement())
+  reservation_id Reservation @relation(fields: [reservationId], references: [id])
+  name           String
+  number         Int
+  source         String
+  letterNo       Int
+  holderName     String
+  cardNumber     Int
+  securityCode   Int
+  expired_at     DateTime
+  updated_at     DateTime    @updatedAt
+  created_at     DateTime    @default(now())
+  reservationId  Int
+}
+
+model Deposit {
+  id               Int           @id @default(autoincrement())
+  reservation_id   Reservation   @relation(fields: [reservationId], references: [id])
+  reservationId    Int
+  depositTo        String
+  transactionType  String
+  balance          Float
+  depositPaid      Float
+  depositDate      DateTime
+  dueDate          DateTime
+  paymentMethod    PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId  Int
+  masterBillActive Boolean
+  totalDeposit     Float
+  created_at       DateTime
+  updated_at       DateTime
+}
+
+model LogReservation {
+  id              Int            @id @default(autoincrement())
+  reservation     Reservation    @relation(fields: [reservationId], references: [id])
+  reservationId   Int
+  arrivalDate     DateTime
+  departureDate   DateTime
+  quantity        Int
+  manyAdult       Int
+  manyChild       Int
+  manyRoom        Int
+  reserver        Reserver       @relation(fields: [reserverId], references: [id])
+  reserverId      Int
+  room            Room           @relation(fields: [roomId], references: [id])
+  roomId          Int
+  resvStatus      ResvStatus     @relation(fields: [resvStatusId], references: [id])
+  resvStatusId    Int
+  fixRate         Boolean
+  argtCode        Int
+  rate            Float
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  PaymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId Int?
+}
+
+model LogAvailability {
+  id                   Int      @id @default(autoincrement())
+  room_1               Boolean
+  room_2               Boolean
+  room_3               Boolean
+  room_4               Boolean
+  room_5               Boolean
+  room_6               Boolean
+  room_7               Boolean
+  room_8               Boolean
+  room_9               Boolean
+  room_10              Boolean
+  availBeforeAllotment Int
+  allotment            Int
+  availAfterAllotment  Int
+  totalOverbooking     Int
+  ooo                  Int
+  tentative            Int
+  standardRoom         Int
+  familyRoom           Int
+  deluxeRoom           Int
+  occupiedRoom         Int
+  cleanedRoom          Int
+  dirtyRoom            Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model CanceledReservation {
+  id            Int         @id @default(autoincrement())
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  guest         Guest       @relation(fields: [guestId], references: [id])
+  guestId       Int
+  resvStatus    ResvStatus  @relation(fields: [resvStatusId], references: [id])
+  resvStatusId  Int
+  argtCode      Int
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  kcard         String
+  arrivalDate   DateTime
+  departureDate DateTime
+  resvQty       ResvQty     @relation(fields: [resvQtyId], references: [id])
+  resvQtyId     Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  body        String
+  createdAt   DateTime
+  updatedAt   DateTime
+  Discrepancy Discrepancy[]
+}
+
+model Discrepancy {
+  id             Int         @id @default(autoincrement())
+  reservation_Id Reservation @relation(fields: [reservationId], references: [id])
+  reservationId  Int
+  room           Room        @relation(fields: [roomId], references: [id])
+  roomId         Int
+  foAdult        Int
+  foChild        Int
+  hkAdult        Int
+  hkChild        Int
+  hkStatus       Int
+  foStatus       Int
+  checker        String
+  explanation    String
+  comment_Id     Comment     @relation(fields: [commentId], references: [id])
+  commentId      Int
+  createdAt      DateTime
+  updatedAt      DateTime
+}
+
+// End Front Office Area ======================================================
+
+// House Keeping Area =========================================================
+model CleaningSheet {
+  id            Int         @id @default(autoincrement())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  no            String
+  resvStatus    ResvStatus  @relation(fields: [resvStatusId], references: [id])
+  resvStatusId  Int
+  remark        String
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+model CleanRoom {
+  id            Int         @id @default(autoincrement())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  resvStatus    ResvStatus  @relation(fields: [resvStatusId], references: [id])
+  resvStatusId  Int
+  description   String      @db.Text
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+model DirtyRoom {
+  id            Int         @id @default(autoincrement())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  resvStatus    ResvStatus  @relation(fields: [resvStatusId], references: [id])
+  resvStatusId  Int
+  description   String      @db.Text
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+model OooRoom {
+  id            Int         @id @default(autoincrement())
+  room          Room        @relation(fields: [roomId], references: [id])
+  roomId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+  reason        String      @db.Text
+  from          DateTime
+  until         DateTime
+  resvStatus    ResvStatus  @relation(fields: [resvStatusId], references: [id])
+  resvStatusId  Int
+  description   String      @db.Text
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+// End House Keeping Area =====================================================
+
+// In Room Service Area =======================================================
+
+model ServiceType {
+  id         Int       @id @default(autoincrement())
+  name       String
+  open       String
+  close      String
+  services   Service[]
+  subTypes   SubType[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model SubType {
+  id            Int          @id @default(autoincrement())
+  name          String
+  serviceType   ServiceType  @relation(fields: [serviceTypeId], references: [id])
+  serviceTypeId Int
+  productReqs   ProductReq[]
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+}
+
+model Service {
+  id            Int           @id @default(autoincrement())
+  name          String
+  price         Int
+  desc          String
+  picture       String
+  serviceType   ServiceType   @relation(fields: [serviceTypeId], references: [id])
+  serviceTypeId Int
+  orderDetails  OrderDetail[]
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+}
+
+model ProductReq {
+  id         Int      @id @default(autoincrement())
+  title      String
+  type       SubType  @relation(fields: [typeId], references: [id])
+  typeId     Int
+  desc       String
+  price      Int
+  picture    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model PaymentMethod {
+  id             Int              @id @default(autoincrement())
+  name           String
+  payments       Payment[]
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  LogReservation LogReservation[]
+  Deposit        Deposit[]
+}
+
+model Payment {
+  id              Int           @id @default(autoincrement())
+  name            String
+  code            String
+  params          String?
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId Int
+  transactions    Transaction[]
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+}
+
+model Transaction {
+  id         String        @id
+  name       String
+  status     PaymentStatus
+  payment    Payment       @relation(fields: [paymentId], references: [id])
+  paymentId  Int
+  order      Order?
+  created_at DateTime      @default(now())
+  expired_at DateTime?
+  updated_at DateTime      @updatedAt
+}
+
+model Order {
+  id            String        @id
+  guest         Guest         @relation(fields: [guestId], references: [id])
+  guestId       Int
+  room          Room          @relation(fields: [roomId], references: [id])
+  roomId        Int
+  subtotal      Float
+  total         Float
+  ppn           Float
+  fees          Float
+  status        OrderStatus
+  transaction   Transaction   @relation(fields: [transactionId], references: [id])
+  transactionId String        @unique
+  orderDetails  OrderDetail[]
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+}
+
+model OrderDetail {
+  id         Int      @id @default(autoincrement())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  service    Service  @relation(fields: [serviceId], references: [id])
+  serviceId  Int
+  price      Float
+  qty        Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+// End In Room Service Area ===================================================
