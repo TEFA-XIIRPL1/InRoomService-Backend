@@ -2,33 +2,33 @@ const db = require('./db.service');
 const helper = require('../utils/helper.util');
 const config = require('../configs/general.config');
 
-async function getMultiple(page = 1){
+async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT id, name, released_year, githut_rank, pypl_rank, tiobe_rank 
-    FROM programming_languages LIMIT ?,?`, 
-    [offset, config.listPerPage]
+    FROM programming_languages LIMIT ?,?`,
+    [offset, config.listPerPage],
   );
   const data = helper.emptyOrRows(rows);
-  const meta = {page};
+  const meta = { page };
 
   return {
     data,
-    meta
-  }
+    meta,
+  };
 }
 
-async function create(programmingLanguage){
+async function create(programmingLanguage) {
   const result = await db.query(
     `INSERT INTO programming_languages 
     (name, released_year, githut_rank, pypl_rank, tiobe_rank) 
     VALUES 
-    (?, ?, ?, ?, ?)`, 
+    (?, ?, ?, ?, ?)`,
     [
       programmingLanguage.name, programmingLanguage.released_year,
       programmingLanguage.githut_rank, programmingLanguage.pypl_rank,
-      programmingLanguage.tiobe_rank
-    ]
+      programmingLanguage.tiobe_rank,
+    ],
   );
 
   let message = 'Error in creating programming language';
@@ -37,20 +37,20 @@ async function create(programmingLanguage){
     message = 'Programming language created successfully';
   }
 
-  return {message};
+  return { message };
 }
 
-async function update(id, programmingLanguage){
+async function update(id, programmingLanguage) {
   const result = await db.query(
     `UPDATE programming_languages 
     SET name=?, released_year=?, githut_rank=?, 
     pypl_rank=?, tiobe_rank=? 
-    WHERE id=?`, 
+    WHERE id=?`,
     [
       programmingLanguage.name, programmingLanguage.released_year,
       programmingLanguage.githut_rank, programmingLanguage.pypl_rank,
-      programmingLanguage.tiobe_rank, id
-    ]
+      programmingLanguage.tiobe_rank, id,
+    ],
   );
 
   let message = 'Error in updating programming language';
@@ -59,13 +59,13 @@ async function update(id, programmingLanguage){
     message = 'Programming language updated successfully';
   }
 
-  return {message};
+  return { message };
 }
 
-async function remove(id){
+async function remove(id) {
   const result = await db.query(
-    `DELETE FROM programming_languages WHERE id=?`, 
-    [id]
+    'DELETE FROM programming_languages WHERE id=?',
+    [id],
   );
 
   let message = 'Error in deleting programming language';
@@ -74,12 +74,12 @@ async function remove(id){
     message = 'Programming language deleted successfully';
   }
 
-  return {message};
+  return { message };
 }
 
 module.exports = {
   getMultiple,
   create,
   update,
-  remove
-}
+  remove,
+};
