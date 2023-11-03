@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const inRoomServiceRouter = require('./src/routes/inRoomService.route');
+const guestRouter = require('./src/routes/guest.route');
 
 app.use(bodyParser.json());
 app.use(
@@ -16,15 +16,16 @@ app.get('/', (req, res) => {
   res.json({ message: 'dedek wawan berjalan dengan benar' });
 });
 
-app.use('/in-room-service', inRoomServiceRouter);
+app.use('/guest', guestRouter);
 
 /* Error handler middleware */
-app.use((err, req, res, next) => {
+app.use((req, res, err) => {
   const statusCode = err.statusCode || 500;
   console.error(err.message, err.stack);
   res.status(statusCode).json({ message: err.message });
 });
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, (err) => {
+  if (err) console.error(err);
   console.log(`listening at http://localhost:${port}`);
 });
