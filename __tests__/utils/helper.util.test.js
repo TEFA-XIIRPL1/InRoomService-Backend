@@ -1,4 +1,4 @@
-const helper = require('../../../src/utils/helper.util');
+const helper = require('../../src/utils/helper.util');
 
 describe('Helper Utils test', () => {
   describe('getOffset', () => {
@@ -6,10 +6,10 @@ describe('Helper Utils test', () => {
       expect(helper.getOffset()).toBe(0);
     });
     it('Should get the offset 0 for page 1 with 10 items per page', () => {
-      expect(helper.getOffset(1, 10)).toBe(0);
+      expect(helper.getOffset(10, 1)).toBe(0);
     });
     it('Should get the offset 11 for page 2 with 10 items per page', () => {
-      expect(helper.getOffset(2, 10)).toBe(10);
+      expect(helper.getOffset(10, 2)).toBe(10);
     });
   });
 
