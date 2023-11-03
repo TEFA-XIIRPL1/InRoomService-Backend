@@ -1,0 +1,13 @@
+{
+  // line breaks
+  "files.eol": "\n",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+
+  // clean up
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll.eslint": true
+  }
+}
