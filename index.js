@@ -1,22 +1,22 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+
+const config = require('./src/configs/general.config');
+
+const port = config.port || 3000;
+const guestRouter = require('./src/routes/guest.route');
+const authRouter = require('./src/routes/auth.route');
+const { configServer } = require('./src/configs/server.config');
 
 const app = express();
-const port = process.env.PORT || 3000;
-const guestRouter = require('./src/routes/guest.route');
 
-app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  }),
-);
+configServer(app);
 
 app.get('/', (req, res) => {
   res.json({ message: 'dedek wawan berjalan dengan benar' });
 });
 
 app.use('/guest', guestRouter);
+app.use('/auth', authRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {
