@@ -2,7 +2,7 @@ const { prisma } = require('../configs/prisma.config');
 const { errorResponse, successResponse } = require('../utils/helper.util');
 
 async function get(req, res) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.guest.findUnique({
     where: {
       id: parseInt(req.params.id, 10),
     },

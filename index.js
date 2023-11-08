@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 
 const app = express();
 const port = process.env.PORT || 3000;
 const guestRouter = require('./src/routes/guest.route');
+const servicesRouter = require('./src/routes/services.route');
 
 app.use(bodyParser.json());
 app.use(
@@ -13,10 +15,11 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  res.json({ message: 'dedek wawan berjalan dengan benar' });
+  res.json({ message: 'putri kecil ayah berjalan dengan benar' });
 });
 
 app.use('/guest', guestRouter);
+app.use('/services', servicesRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {
