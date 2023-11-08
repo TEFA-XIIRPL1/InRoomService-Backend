@@ -43,7 +43,7 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `UserToken` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `refreshToken` VARCHAR(255) NOT NULL,
+    `refreshToken` VARCHAR(355) NOT NULL,
     `userId` INTEGER NOT NULL,
     `expired_at` DATETIME(3) NOT NULL,
 
@@ -54,7 +54,7 @@ CREATE TABLE `UserToken` (
 -- CreateTable
 CREATE TABLE `GuestToken` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `refreshToken` VARCHAR(255) NOT NULL,
+    `refreshToken` VARCHAR(355) NOT NULL,
     `guestId` INTEGER NOT NULL,
     `expired_at` DATETIME(3) NOT NULL,
 
