@@ -20,12 +20,23 @@ describe('GET /services/', () => {
 
 // describe('Post /services/create-service', () => {
 //     it('Should post a new service', async () => {
-//         const response = await request(app).get('/services/create-service');
+//         const response = await request(app).post('/services/create-service');
 //         expect(response.statusCode).toBe(200);
 //         expect(response.body).toHaveProperty('data');
 //     })
 // })
 
 // describe('Put /services/update/', () => {
-//     it('Should put an update to a service with id 4')
+//     it('Should put an update to a service with id 4', async () => {
+//         const response = await request(app).put('/services/update/4');
+//         expect(response.statusCode).toBe(200);
+//         expect(response.body).toHaveProperty('data');
+//     })
+// })
+
+// describe('Delete /services/delete', () => {
+//     it('Should delete a service with the newest id', async () => {
+//         const id = await request(app).
+//         const response = await request(app).delete(`/services/delete/${id}`)
+//     })
 // })

@@ -51,6 +51,72 @@ const getServiceById = async (req, res) => {
   }
 };
 
+const getServiceAsc = async (req, res) => {
+  try {
+    const { serviceTypeId } = req.params;
+    const { search } = req.query;
+    const service = await prisma.service.findMany({
+      where: {
+        serviceTypeId: parseInt(serviceTypeId, 10),
+        name: {
+          contains: search,
+        },
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    successResponse(
+      res,
+      'getting service by ascending order success',
+      service,
+      200,
+    );
+  } catch (error) {
+    console.error(error);
+    errorResponse(
+      res,
+      'Getting service by ascending order encountered an error',
+      '',
+      404,
+    );
+  }
+};
+
+const getServiceDesc = async (req, res) => {
+  try {
+    const { serviceTypeId } = req.params;
+    const { search } = req.query;
+    const service = await prisma.service.findMany({
+      where: {
+        serviceTypeId: parseInt(serviceTypeId, 10),
+        name: {
+          contains: search,
+        },
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    successResponse(
+      res,
+      'getting service by descending order success',
+      service,
+      200,
+    );
+  } catch (error) {
+    console.error(error);
+    errorResponse(
+      res,
+      'Getting service by descending order encountered an error',
+      '',
+      404,
+    );
+  }
+};
+
 const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
@@ -129,4 +195,6 @@ module.exports = {
   createService,
   updateService,
   getServiceById,
+  getServiceAsc,
+  getServiceDesc,
 };
