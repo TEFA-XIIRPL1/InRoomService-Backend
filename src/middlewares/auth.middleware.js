@@ -7,7 +7,7 @@ const { verifyToken, errorResponse } = require('../utils/helper.util');
  * @param {import('express').NextFunction} next
  */
 
-const auth = (role) => async (req, res, next) => {
+const auth = (roles) => async (req, res, next) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) {
     return errorResponse(
@@ -34,6 +34,13 @@ const auth = (role) => async (req, res, next) => {
     where: {
       id: decoded.id,
     },
+    select: {
+      role: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -53,13 +60,14 @@ const auth = (role) => async (req, res, next) => {
     );
   }
 
-  if (role !== undefined) {
-    if (decoded.role.name !== role && decoded.role.name !== 'Super Admin') {
+  if (roles !== undefined) {
+    const isAllowed = roles.some((role) => role === user.role.name);
+    if (!isAllowed) {
       return errorResponse(
         res,
-        'Unauthorized, you are not allowed to access this resource',
+        'Forbidden, you are not allowed access this resource',
         null,
-        401,
+        403,
       );
     }
   }
