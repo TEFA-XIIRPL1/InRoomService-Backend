@@ -3,10 +3,14 @@ const express = require('express');
 const config = require('./src/configs/general.config');
 
 const port = config.port || 3000;
+const { configServer } = require('./src/configs/server.config');
+
+// middlewares
+const middleware = require('./src/middlewares/auth.middleware');
+
+// routers
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
-const { configServer } = require('./src/configs/server.config');
-const middleware = require('./src/middlewares/auth.middleware');
 
 const app = express();
 
