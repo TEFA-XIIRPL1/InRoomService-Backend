@@ -14,12 +14,7 @@ async function get(req, res) {
       },
     });
 
-    return successResponse(
-      res,
-      `User ${req.params.id} has been getted successfully`,
-      user,
-      200,
-    );
+    return successResponse(res, `User ${req.params.id} has been getted successfully`, user, 200);
   } catch (error) {
     return errorResponse(res, 'User not found', '', 404);
   }

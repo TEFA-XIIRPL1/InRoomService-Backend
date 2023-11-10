@@ -3,10 +3,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../services/auth.service');
 const middleware = require('../middlewares/auth.middleware');
-const {
-  loginValidation,
-  registerValidation,
-} = require('../validations/auth.validation');
+const { loginValidation, registerValidation } = require('../validations/auth.validation');
 
 router.post('/register', loginValidation, auth.register);
 

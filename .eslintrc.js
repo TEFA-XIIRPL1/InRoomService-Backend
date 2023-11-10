@@ -12,5 +12,14 @@ module.exports = {
     'no-console': 'off',
     'no-restricted-syntax': 'off',
     'no-await-in-loop': 'off',
+    'object-curly-newline': [
+      'error',
+      {
+        ObjectExpression: { consistent: true, multiline: true },
+        ObjectPattern: { consistent: true, multiline: true },
+        ImportDeclaration: 'never',
+        ExportDeclaration: { multiline: true, minProperties: 3 },
+      },
+    ],
   },
 };

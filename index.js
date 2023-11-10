@@ -11,6 +11,7 @@ const middleware = require('./src/middlewares/auth.middleware');
 // routers
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
+const servicesRouter = require('./src/routes/services.route');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/auth', authRouter);
 
 app.use(middleware(['Admin']));
 app.use('/guest', guestRouter);
+app.use('/services', servicesRouter);
 
 app.listen(port, (err) => {
   if (err) console.error(err);

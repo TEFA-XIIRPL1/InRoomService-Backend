@@ -10,22 +10,12 @@ const { verifyToken, errorResponse } = require('../utils/helper.util');
 const auth = (roles) => async (req, res, next) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) {
-    return errorResponse(
-      res,
-      'Forbidden, refresh token is not found',
-      null,
-      403,
-    );
+    return errorResponse(res, 'Forbidden, refresh token is not found', null, 403);
   }
 
   const { authorization } = req.headers;
   if (!authorization) {
-    return errorResponse(
-      res,
-      'Forbidden authorization token is not found',
-      null,
-      403,
-    );
+    return errorResponse(res, 'Forbidden authorization token is not found', null, 403);
   }
 
   const accessToken = authorization.split(' ')[1];
@@ -44,31 +34,16 @@ const auth = (roles) => async (req, res, next) => {
   });
 
   if (!user) {
-    return errorResponse(
-      res,
-      'Forbidden, you are not allowed access this resource',
-      null,
-      403,
-    );
+    return errorResponse(res, 'Forbidden, you are not allowed access this resource', null, 403);
   }
   if (decoded instanceof Error) {
-    return errorResponse(
-      res,
-      'Unauthenticated, you are not logged in',
-      null,
-      401,
-    );
+    return errorResponse(res, 'Unauthenticated, you are not logged in', null, 401);
   }
 
   if (roles !== undefined) {
     const isAllowed = roles.some((role) => role === user.role.name);
     if (!isAllowed) {
-      return errorResponse(
-        res,
-        'Forbidden, you are not allowed access this resource',
-        null,
-        403,
-      );
+      return errorResponse(res, 'Forbidden, you are not allowed access this resource', null, 403);
     }
   }
 

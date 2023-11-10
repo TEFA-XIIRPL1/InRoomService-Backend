@@ -141,12 +141,7 @@ async function refresh(req, res) {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
-        return errorResponse(
-          res,
-          'Refresh token invalid or not found',
-          null,
-          404,
-        );
+        return errorResponse(res, 'Refresh token invalid or not found', null, 404);
       }
       return errorResponse(res, 'Invalid request', error, 400);
     }
@@ -171,12 +166,7 @@ async function logout(req, res) {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
-        return errorResponse(
-          res,
-          'Refresh token invalid or not found',
-          null,
-          404,
-        );
+        return errorResponse(res, 'Refresh token invalid or not found', null, 404);
       }
       return errorResponse(res, 'Bad request', error, 400);
     }
