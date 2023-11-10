@@ -13,12 +13,20 @@ function emptyOrRows(rows) {
   return rows;
 }
 
+/**
+ * @param {import('express').Response} res
+ */
+
 function errorResponse(res, message, data, code = 500) {
-  return res.status(code).json({ success: false, message, data });
+  res.status(code).json({ success: false, message, data });
 }
 
+/**
+ * @param {import('express').Response} res
+ */
+
 function successResponse(res, message, data, code = 200) {
-  return res.status(code).json({ success: true, message, data });
+  res.status(code).json({ success: true, message, data });
 }
 
 function generateToken(payload) {
@@ -52,16 +60,6 @@ function generateToken(payload) {
   return { at, rt };
 }
 
-function decodeToken(token) {
-  try {
-    const payload = jwt.decode(token, config.secret);
-    if (payload === null || !payload) throw new Error('Invalid token');
-    return payload;
-  } catch (error) {
-    return error;
-  }
-}
-
 function verifyToken(token) {
   try {
     const payload = jwt.verify(token, config.secret);
@@ -73,6 +71,11 @@ function verifyToken(token) {
 }
 
 function validate(scheme) {
+  /**
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   return (req, res, next) => {
     try {
       scheme.parse({
@@ -98,5 +101,4 @@ module.exports = {
   errorResponse,
   successResponse,
   generateToken,
-  decodeToken,
 };
