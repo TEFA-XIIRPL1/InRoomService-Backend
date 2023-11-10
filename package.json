@@ -8,6 +8,7 @@
     "lint-fix": "eslint . --ext .js --fix",
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "db:restart": "bash docker/scripts/restart-db.sh",
     "prepare": "husky install"
   },
   "keywords": [],

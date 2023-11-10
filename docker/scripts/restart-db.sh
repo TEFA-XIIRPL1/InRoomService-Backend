@@ -1,0 +1,1 @@
+docker compose rm lingiathotel-db -svh && docker compose up db -d && npx prisma migrate reset --force && npx prisma studio
