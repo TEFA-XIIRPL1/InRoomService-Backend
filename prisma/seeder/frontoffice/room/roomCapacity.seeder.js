@@ -5,8 +5,6 @@ const roomCapacities = [
     adultCapacity: 2,
     childCapacity: 1,
     manyRoom: 1,
-    created_at: new Date(),
-    updated_at: new Date(),
   },
 ];
 

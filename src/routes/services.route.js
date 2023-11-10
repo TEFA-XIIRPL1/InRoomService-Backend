@@ -18,11 +18,7 @@ const upload = multer({ storage });
 
 router.get('/:serviceTypeId', services.getService);
 router.get('/:serviceTypeId/:id', services.getServiceById);
-router.post(
-  '/create-service',
-  upload.single('picture'),
-  services.createService,
-);
+router.post('/create-service', upload.single('picture'), services.createService);
 router.delete('/delete/:id', services.deleteService);
 router.put('/update/:id', upload.single('picture'), services.updateService);
 

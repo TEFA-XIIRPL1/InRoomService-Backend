@@ -6,7 +6,6 @@ const getService = async (req, res) => {
   try {
     const { serviceTypeId } = req.params;
     const { search } = req.query;
-    console.log(search);
     const service = await prisma.service.findMany({
       where: {
         serviceTypeId: parseInt(serviceTypeId, 10),
@@ -16,7 +15,7 @@ const getService = async (req, res) => {
       },
     });
 
-    successResponse(
+    return successResponse(
       res,
       `Service ${req.params.serviceTypeId} has been getted successfully`,
       service,
@@ -24,7 +23,7 @@ const getService = async (req, res) => {
     );
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Service not found', '', 404);
+    return errorResponse(res, 'Service not found', '', 404);
   }
 };
 
@@ -39,7 +38,7 @@ const getServiceById = async (req, res) => {
       },
     });
 
-    successResponse(
+    return successResponse(
       res,
       `Service ${req.params.id} has been getted successfully`,
       service,
@@ -47,7 +46,7 @@ const getServiceById = async (req, res) => {
     );
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Service not found', '', 404);
+    return errorResponse(res, 'Service not found', '', 404);
   }
 };
 
@@ -58,18 +57,16 @@ const deleteService = async (req, res) => {
       where: { id: parseInt(id, 10) },
     });
 
-    successResponse(res, 'Service yang dipilih telah dihapus', service, 200);
+    return successResponse(res, 'Service yang dipilih telah dihapus', service, 200);
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Deleting failed', '', 404);
+    return errorResponse(res, 'Deleting failed', '', 404);
   }
 };
 
 const createService = async (req, res) => {
   try {
-    const {
-      name, price, desc, serviceTypeId,
-    } = req.body;
+    const { name, price, desc, serviceTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `https://${req.headers.host}/uploads/${picture}`;
     const service = await prisma.service.create({
@@ -83,10 +80,10 @@ const createService = async (req, res) => {
       },
     });
 
-    successResponse(res, 'Create service success', service, 200);
+    return successResponse(res, 'Create service success', service, 200);
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Create service failed', '', 404);
+    return errorResponse(res, 'Create service failed', '', 404);
   }
 };
 
@@ -97,9 +94,7 @@ const updateService = async (req, res) => {
       where: { id: parseInt(id, 10) },
     });
     const oldImagePath = item.picture;
-    const {
-      name, price, desc, serviceTypeId,
-    } = req.body;
+    const { name, price, desc, serviceTypeId } = req.body;
     const picture = req.file.path;
     const service = await prisma.service.updateMany({
       where: { id: parseInt(id, 10) },
@@ -117,9 +112,9 @@ const updateService = async (req, res) => {
       fs.unlinkSync(oldImagePath);
     }
 
-    successResponse(res, 'update service success', service, 200);
+    return successResponse(res, 'update service success', service, 200);
   } catch (error) {
-    errorResponse(res, 'update service failed', '', 404);
+    return errorResponse(res, 'update service failed', '', 404);
   }
 };
 
