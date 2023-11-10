@@ -18,15 +18,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/:serviceTypeId', services.getService);
-router.get('/:serviceTypeId/:id', services.getServiceById);
-router.ger('/:serviceTypeId/asc', services.getServiceAsc);
-router.ger('/:serviceTypeId/desc', services.getServiceDesc);
+router.get('/:serviceTypeId/latest', services.getServiceLatest);
 router.post(
   '/create-service',
   upload.single('picture'),
   services.createService,
 );
-router.delete('/delete/:id', services.deleteService);
-router.put('/update/:id', upload.single('picture'), services.updateService);
+router.delete('/delete/', services.deleteService);
+router.put('/update/', upload.single('picture'), services.updateService);
 
 module.exports = router;

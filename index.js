@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 
 app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
+app.use('/uploads', express.static('uploads'));
 
 /* Error handler middleware */
 app.use((req, res, err) => {
