@@ -5,8 +5,14 @@ const {
   errorResponse,
   successResponse,
   generateToken,
-  decodeToken,
+  verifyToken,
 } = require('../utils/helper.util');
+
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 
 async function register(req, res) {
   try {
@@ -97,8 +103,16 @@ async function login(req, res) {
 async function refresh(req, res) {
   try {
     const { refreshToken } = req.cookies;
-    if (refreshToken === undefined) throw new Error('Refresh token not found');
-    const user = decodeToken(refreshToken);
+    if (!refreshToken) {
+      throw new Error('Forbidden refresh token is not found');
+    }
+
+    const user = verifyToken(refreshToken);
+    await prisma.user.findUniqueOrThrow({
+      where: {
+        id: user.id,
+      },
+    });
 
     await prisma.userToken.delete({
       where: {
@@ -125,7 +139,6 @@ async function refresh(req, res) {
 
     return successResponse(res, 'Refresh token success', { accessToken: at });
   } catch (error) {
-    console.log(error.message);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return errorResponse(
@@ -142,21 +155,19 @@ async function refresh(req, res) {
 }
 
 async function logout(req, res) {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) {
-    throw new Error('Forbidden Refresh token not found');
-  }
-
-  const user = decodeToken(refreshToken);
   try {
+    const { refreshToken } = req.cookies;
+
+    const decoded = verifyToken(refreshToken);
     await prisma.userToken.delete({
       where: {
         refreshToken,
-        userId: user.id,
+        userId: decoded.id,
       },
     });
 
     res.clearCookie('refreshToken');
+    return successResponse(res, 'Logout success', null, 200);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
@@ -171,8 +182,6 @@ async function logout(req, res) {
     }
     return errorResponse(res, error.message, null, 403);
   }
-
-  return successResponse(res, 'Logout success', null, 200);
 }
 
 module.exports = {
