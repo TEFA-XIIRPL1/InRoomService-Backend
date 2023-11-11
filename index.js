@@ -3,7 +3,11 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const path = require('path');
 const guestRouter = require('./src/routes/guest.route');
+const productReqRouter = require('./src/routes/productReq.route');
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
 app.use(
@@ -17,6 +21,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/guest', guestRouter);
+
+app.use('/productReq', productReqRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {
