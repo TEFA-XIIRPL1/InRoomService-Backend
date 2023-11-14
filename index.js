@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const config = require('./src/configs/general.config');
 
@@ -14,6 +15,9 @@ const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
 
 const app = express();
+const productReqRouter = require('./src/routes/productReq.route');
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 configServer(app);
 
@@ -25,6 +29,15 @@ app.use('/auth', authRouter);
 
 app.use(middleware(['Admin']));
 app.use('/guest', guestRouter);
+
+app.use('/productReq', productReqRouter);
+
+/* Error handler middleware */
+app.use((req, res, err) => {
+  const statusCode = err.statusCode || 500;
+  console.error(err.message, err.stack);
+  res.status(statusCode).json({ message: err.message });
+});
 app.use('/services', servicesRouter);
 
 app.listen(port, (err) => {

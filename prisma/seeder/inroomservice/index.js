@@ -11,6 +11,7 @@ async function inRoomServiceBatchSeed() {
   await paymentMethodSeed(); // important to seed paymentMethod first before payment
   await paymentSeed();
   /* payment seeed end */
+
 }
 
 module.exports = { inRoomServiceBatchSeed };

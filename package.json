@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
+    "test": "^3.3.0",
     "zod": "^3.22.4"
   },
   "directories": {
