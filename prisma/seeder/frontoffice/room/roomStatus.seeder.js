@@ -2,9 +2,49 @@ const { prisma } = require("../../config");
 
 const roomStatuses = [
   {
-    description: "Available",
-    hexCode: "#00ff00",
-    availHexCode: "#00ff00",
+    description: "Vacant Clean",
+    hexCode: "#ffffff",
+    availHexCode: "",
+  },
+  {
+    description: "Vacant Clean Uncheck",
+    hexCode: "#ffffff",
+    availHexCode: "#fdfd06",
+  },
+  {
+    description: "Vacant Dirty",
+    hexCode: "#10780a",
+    availHexCode: "",
+  },
+  {
+    description: "Occupied Dirty",
+    hexCode: "#fffc06",
+    availHexCode: "",
+  },
+  {
+    description: "Occupied Clean",
+    hexCode: "#f8fdf7",
+    availHexCode: "",
+  },
+  {
+    description: "EAD",
+    hexCode: "#33e02f",
+    availHexCode: "",
+  },
+  {
+    description: "ED",
+    hexCode: "#020176",
+    availHexCode: "",
+  },
+  {
+    description: "DD",
+    hexCode: "#850179",
+    availHexCode: "",
+  },
+  {
+    description: "Out Of Order",
+    hexCode: "#f80203",
+    availHexCode: "#f80203",
   },
 ];
 

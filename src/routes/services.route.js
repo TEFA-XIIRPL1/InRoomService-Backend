@@ -19,12 +19,8 @@ const upload = multer({ storage });
 
 router.get('/:serviceTypeId', services.getService);
 router.get('/:serviceTypeId/latest', services.getServiceLatest);
-router.post(
-  '/create-service',
-  upload.single('picture'),
-  services.createService,
-);
-router.delete('/delete/', services.deleteService);
-router.put('/update/', upload.single('picture'), services.updateService);
+router.post('/create-service', upload.single('picture'), services.createService);
+router.delete('/delete', services.deleteService);
+router.put('/update', upload.single('picture'), services.updateService);
 
 module.exports = router;

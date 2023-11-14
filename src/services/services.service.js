@@ -22,7 +22,7 @@ const getService = async (req, res) => {
       },
     });
 
-    successResponse(
+    return successResponse(
       res,
       `Service ${req.params.serviceTypeId} has been getted successfully`,
       service,
@@ -30,7 +30,7 @@ const getService = async (req, res) => {
     );
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Service not found', '', 404);
+    return errorResponse(res, 'Service not found', '', 404);
   }
 };
 
@@ -55,9 +55,7 @@ const getServiceLatest = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
-    const {
-      name, price, desc, serviceTypeId,
-    } = req.body;
+    const { name, price, desc, serviceTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     const service = await prisma.service.create({
@@ -71,54 +69,75 @@ const createService = async (req, res) => {
       },
     });
 
-    successResponse(res, 'Create service success', service, 200);
+    return successResponse(res, 'Create service success', service, 200);
   } catch (error) {
     console.error(error);
-    errorResponse(res, 'Create service failed', '', 404);
+    return errorResponse(res, 'Create service failed', '', 404);
   }
 };
 
 const updateService = async (req, res) => {
   try {
     const { id } = req.query;
-    // const item =
-    // const oldImagePath = path.resolve('../../uploads/');
-    const {
-      name, price, desc, serviceTypeId,
-    } = req.body;
+    const item = await prisma.service.findUnique({
+      where: { id: parseInt(id, 10) },
+    });
+    const oldPictureUrl = item.picture;
+    const oldPictureSaved = oldPictureUrl.split('/').pop();
+    const oldPicturePath = `./uploads/${oldPictureSaved}`;
+    const { name, price, desc, serviceTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
+    try {
+      await prisma.service.updateMany({
+        where: { id: parseInt(id, 10) },
+        data: {
+          picture: pictureUrl,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      if (oldPicturePath) {
+        fs.unlinkSync(oldPicturePath);
+      }
+    } catch (error) {
+      console.log(error);
+    }
     const service = await prisma.service.updateMany({
       where: { id: parseInt(id, 10) },
       data: {
         name,
         price: parseInt(price, 10),
         desc,
-        picture: pictureUrl,
         serviceTypeId: parseInt(serviceTypeId, 10),
         updated_at: new Date(),
       },
     });
 
-    // if (oldImagePath) {
-    //   fs.unlinkSync(oldImagePath);
-    // }
-
-    successResponse(res, 'update service success', service, 200);
+    return successResponse(res, 'update service success', service, 200);
   } catch (error) {
-    errorResponse(res, 'update service failed', '', 404);
+    console.log(error);
+    return errorResponse(res, 'update service failed', '', 404);
   }
 };
 
 const deleteService = async (req, res) => {
   try {
     const { id } = req.query;
-    const item = await prisma.service.findMany({
+    const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
-    const oldImagePath = item.picture;
-    if (oldImagePath) {
-      fs.unlinkSync(oldImagePath);
+    const oldPictureUrl = item.picture;
+    const oldPictureSaved = oldPictureUrl.split('/').pop();
+    const oldPicturePath = `./uploads/${oldPictureSaved}`;
+    try {
+      if (oldPicturePath) {
+        fs.unlinkSync(oldPicturePath);
+      }
+    } catch (error) {
+      console.log(error);
     }
     const service = await prisma.service.delete({
       where: { id: parseInt(id, 10) },
@@ -126,8 +145,8 @@ const deleteService = async (req, res) => {
 
     successResponse(res, 'Service yang dipilih telah dihapus', service, 200);
   } catch (error) {
-    console.error(error);
-    errorResponse(res, 'Deleting failed', '', 404);
+    console.log(error);
+    errorResponse(res, 'delete service failed', '', 404);
   }
 };
 
