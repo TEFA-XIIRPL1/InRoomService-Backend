@@ -12,9 +12,6 @@ async function inRoomServiceBatchSeed() {
   await paymentSeed();
   /* payment seeed end */
 
-  /* productReq seeed */
-  await productReqSeed();
-  /* productReq seeed end */
 }
 
 module.exports = { inRoomServiceBatchSeed };
