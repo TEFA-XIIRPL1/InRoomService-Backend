@@ -105,7 +105,7 @@ describe('PUT /room/patch/:id', () => {
 
 describe('DELETE /room/delete/:id', () => {
   it('Should delete room with ID', async () => {
-    const response = await request(app).delete('/room/delete/5');
+    const response = await request(app).delete('/room/delete/6');
     expect(response.statusCode).toBe(200);
   });
 });
