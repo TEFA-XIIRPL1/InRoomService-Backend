@@ -34,7 +34,7 @@ describe('POST /productReq/create', () => {
     };
 
     const filePath =
-      'D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+      'D:/luqman/SMKN 4 BANDUNG XI/PKK/InRoomService/InRoomService-Backend/public/assets/images/betadine.jpg';
 
     const response = await request(app)
       .post('/productReq/create')
@@ -61,10 +61,10 @@ describe('PUT /productReq/update/:id', () => {
     };
 
     const filePath =
-      'D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/loreal.jpg';
+      'D:/luqman/SMKN 4 BANDUNG XI/PKK/InRoomService/InRoomService-Backend/public/assets/images/loreal.jpg';
 
     const response = await request(app)
-      .put(`/productReq/update/2`)
+      .put(`/productReq/update/3`)
       .field('title', updatedProductReq.title)
       .field('userId', updatedProductReq.userId)
       .field('typeId', updatedProductReq.typeId)
@@ -79,7 +79,7 @@ describe('PUT /productReq/update/:id', () => {
 
 describe('DELETE /productReq', () => {
   it('Should delete productReq with ID', async () => {
-    const response = await request(app).delete('/productReq/delete/8');
+    const response = await request(app).delete('/productReq/delete/3');
     expect(response.statusCode).toBe(200);
   });
 });
