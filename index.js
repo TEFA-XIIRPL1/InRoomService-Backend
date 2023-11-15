@@ -1,27 +1,36 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const path = require('path');
+
+const config = require('./src/configs/general.config');
+
+const port = config.port || 3000;
+const { configServer } = require('./src/configs/server.config');
+
+// middlewares
+const middleware = require('./src/middlewares/auth.middleware');
+
+// routers
+const guestRouter = require('./src/routes/guest.route');
+const authRouter = require('./src/routes/auth.route');
+const servicesRouter = require('./src/routes/services.route');
 
 const app = express();
-const port = process.env.PORT || 3000;
-const guestRouter = require('./src/routes/guest.route');
-const roomRouter = require('./src/routes/room.route');
-const profileRouter = require('./src/routes/profile.route');
+const productReqRouter = require('./src/routes/productReq.route');
 
-app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  }),
-);
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+configServer(app);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'dedek wawan berjalan dengan benar' });
+  res.status(200).render('<p >Hello World</p>');
 });
 
-// route
-app.use('/room', roomRouter);
+app.use('/auth', authRouter);
+
+app.use(middleware(['Admin']));
 app.use('/guest', guestRouter);
-app.use('/profile', profileRouter);
+
+app.use('/productReq', productReqRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {
@@ -29,6 +38,7 @@ app.use((req, res, err) => {
   console.error(err.message, err.stack);
   res.status(statusCode).json({ message: err.message });
 });
+app.use('/services', servicesRouter);
 
 app.listen(port, (err) => {
   if (err) console.error(err);
