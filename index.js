@@ -1,4 +1,6 @@
 const express = require('express');
+const SocketIO = require('socket.io');
+const { setupChat } = require('./src/services/chat.service');
 
 const config = require('./src/configs/general.config');
 
@@ -26,9 +28,13 @@ app.use('/auth', authRouter);
 app.use(middleware(['Admin']));
 app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
+app.use();
 app.use('/uploads', express.static('uploads'));
 
-app.listen(port, (err) => {
+const server = app.listen(port, (err) => {
   if (err) console.error(err);
   console.log(`listening at http://localhost:${port}`);
 });
+
+const io = SocketIO(server);
+setupChat(io);
