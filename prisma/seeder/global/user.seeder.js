@@ -1,4 +1,4 @@
-const { prisma } = require("../config");
+const { prisma } = require('../config');
 
 const users = [
   {
@@ -18,7 +18,7 @@ const users = [
 ];
 
 async function userSeed() {
-  for (let user of users) {
+  for (const user of users) {
     await prisma.user.create({
       data: user,
     });

@@ -28,12 +28,7 @@ async function getData(req, res) {
     return errorResponse(res, 'User not found', '', 404);
   }
 
-  return successResponse(
-    res,
-    `Room ${req.params.id} has been getted successfully`,
-    data,
-    200,
-  );
+  return successResponse(res, `Room ${req.params.id} has been getted successfully`, data, 200);
 }
 async function createData(req, res) {
   const {
