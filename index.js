@@ -13,9 +13,10 @@ const middleware = require('./src/middlewares/auth.middleware');
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
+const productReqRouter = require('./src/routes/productReq.route');
+const profileRouter = require('./src/routes/profile.route');
 
 const app = express();
-const productReqRouter = require('./src/routes/productReq.route');
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 
 app.use(middleware(['Admin']));
+app.use('/profile', profileRouter);
 app.use('/guest', guestRouter);
 
 app.use('/productReq', productReqRouter);
