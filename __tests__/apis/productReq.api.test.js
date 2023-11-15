@@ -64,7 +64,7 @@ describe('PUT /productReq/update/:id', () => {
       'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/loreal.jpg';
 
     const response = await request(app)
-      .put(`/productReq/update/4`)
+      .put(`/productReq/update/3`)
       .field('title', updatedProductReq.title)
       .field('userId', updatedProductReq.userId)
       .field('typeId', updatedProductReq.typeId)
@@ -79,7 +79,7 @@ describe('PUT /productReq/update/:id', () => {
 
 describe('DELETE /productReq', () => {
   it('Should delete productReq with ID', async () => {
-    const response = await request(app).delete('/productReq/delete/9');
+    const response = await request(app).delete('/productReq/delete/2');
     expect(response.statusCode).toBe(200);
   });
 });

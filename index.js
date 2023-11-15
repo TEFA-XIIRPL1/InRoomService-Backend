@@ -1,20 +1,19 @@
 const express = require('express');
 const path = require('path');
 
+const config = require('./src/configs/general.config');
+
+const port = config.port || 3000;
 const { configServer } = require('./src/configs/server.config');
 
-// middlewares
-const middleware = require('./src/middlewares/auth.middleware');
-
 // routers
+const roomRouter = require('./src/routes/room.route');
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
+const productReqRouter = require('./src/routes/productReq.route');
 
 const app = express();
-const port = process.env.PORT || 3000;
-const roomRouter = require('./src/routes/room.route');
-const productReqRouter = require('./src/routes/productReq.route');
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -24,14 +23,12 @@ app.get('/', (req, res) => {
   res.status(200).render('<p >Hello World</p>');
 });
 
-// route
-app.use('/room', roomRouter);
 app.use('/auth', authRouter);
-
-app.use(middleware(['Admin']));
+app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
-
 app.use('/productReq', productReqRouter);
+
+// route
 
 /* Error handler middleware */
 app.use((req, res, err) => {

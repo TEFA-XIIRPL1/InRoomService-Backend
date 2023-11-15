@@ -96,7 +96,7 @@ describe('PUT /room/patch/:id', () => {
       rateCodeId: 1,
     };
 
-    const response = await request(app).patch('/room/patch/1').send(newData);
+    const response = await request(app).patch('/room/patch/2').send(newData);
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
@@ -105,7 +105,7 @@ describe('PUT /room/patch/:id', () => {
 
 describe('DELETE /room/delete/:id', () => {
   it('Should delete room with ID', async () => {
-    const response = await request(app).delete('/room/delete/11');
+    const response = await request(app).delete('/room/delete/2');
     expect(response.statusCode).toBe(200);
   });
 });
