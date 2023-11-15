@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 const guestRouter = require('./src/routes/guest.route');
-const { prisma } = require('./src/configs/prisma.config');
-const roomRouter = require("./src/routes/room.route")
+const roomRouter = require('./src/routes/room.route');
+const profileRouter = require('./src/routes/profile.route');
 
 app.use(bodyParser.json());
 app.use(
@@ -18,9 +18,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'dedek wawan berjalan dengan benar' });
 });
 
-//route
-app.use('/room', roomRouter)
+// route
+app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
+app.use('/profile', profileRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {

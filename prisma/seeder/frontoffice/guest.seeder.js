@@ -1,16 +1,16 @@
-const { prisma } = require("../config");
+const { prisma } = require('../config');
 
 const guests = [
   {
-    username: "John Doe",
-    password: "password",
-    name: "John Doe",
-    contact: "08123456789",
+    username: 'John Doe',
+    password: 'password',
+    name: 'John Doe',
+    contact: '08123456789',
   },
 ];
 
 async function guestSeed() {
-  for (let guest of guests) {
+  for (const guest of guests) {
     await prisma.guest.create({
       data: guest,
     });
