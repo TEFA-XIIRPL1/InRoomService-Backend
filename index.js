@@ -8,6 +8,7 @@ const { configServer } = require('./src/configs/server.config');
 const middleware = require('./src/middlewares/auth.middleware');
 
 // routers
+const roomRouter = require('./src/routes/room.route');
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
@@ -26,6 +27,7 @@ app.use(middleware(['Admin']));
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
 app.use('/services', servicesRouter);
+app.use('/room', roomRouter);
 
 // logger
 app.listen(port, (err) => {
