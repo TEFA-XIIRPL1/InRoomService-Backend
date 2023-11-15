@@ -1,6 +1,7 @@
 const express = require('express');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const multer = require('multer');
+const { serviceInputValidation } = require('../validations/service.validation');
 
 const router = express.Router();
 
@@ -17,10 +18,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.post(
+  '/create-service',
+  upload.single('picture'),
+  serviceInputValidation,
+  services.createService,
+);
 router.get('/:serviceTypeId', services.getService);
 router.get('/:serviceTypeId/latest', services.getServiceLatest);
-router.post('/create-service', upload.single('picture'), services.createService);
+router.put('/update', upload.single('picture'), serviceInputValidation, services.updateService);
 router.delete('/delete', services.deleteService);
-router.put('/update', upload.single('picture'), services.updateService);
 
 module.exports = router;

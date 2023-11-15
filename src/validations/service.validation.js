@@ -1,7 +1,7 @@
 const { z } = require('zod');
 const { validate } = require('../utils/helper.util');
 
-const CreateServiceScheme = z.object({
+const ServiceInputScheme = z.object({
   body: z.object({
     name: z.string({
       required_error: 'Name is required',
@@ -12,15 +12,15 @@ const CreateServiceScheme = z.object({
     desc: z.string({
       required_error: 'Desc is required',
     }),
-    picture: z.picture({
+    picture: z.unknown({
       required_error: 'picture',
     }),
-    serviceTypeId: z.unknown({
+    serviceTypeId: z.string({
       required_error: 'Service Type ID is Required',
     }),
   }),
 });
 
-const createServiceValidation = validate(CreateServiceScheme);
+const serviceInputValidation = validate(ServiceInputScheme);
 
-module.exports = { createServiceValidation };
+module.exports = { serviceInputValidation };
