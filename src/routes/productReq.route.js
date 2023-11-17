@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 const express = require('express');
 
 const router = express.Router();
@@ -19,14 +20,14 @@ const storage = multer.diskStorage({
   },
   fileFilter(req, file, cb) {
     if (
-      file.mimetype === 'image/png'
-      || file.mimetype === 'image/jpg'
-      || file.mimetype === 'image/jpeg'
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
     ) {
-      cb(null, false);
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PNG, JPG, and JPEG files are allowed.'), false);
     }
-
-    cb(new Error("I don't have a clue!"), true);
   },
 });
 const upload = multer({ storage });
