@@ -36,7 +36,7 @@ describe('POST /room/create', () => {
       'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/kamar.jpeg';
 
     const newData = {
-      roomType: 'FAMILY',
+      roomType: 'STANDARD',
       roomStatusId: 1,
       roomCode: 1,
       roomCapacityId: 1,
@@ -81,7 +81,6 @@ describe('PUT /room/update/:id', () => {
 
     const newData = {
       roomType: 'FAMILY',
-      roomImage: filePath,
       roomStatusId: 1,
       roomCode: 1,
       roomCapacityId: 1,
@@ -100,7 +99,20 @@ describe('PUT /room/update/:id', () => {
     console.log(`/room/update/${id === 1 ? id : id - 1}`);
     const response = await request(app)
       .put(`/room/update/${id === 1 ? id : id - 1}`)
-      .send(newData);
+      .field('roomType', newData.roomType)
+      .attach('roomImage', filePath) // Attach the image here
+      .field('roomStatusId', newData.roomStatusId)
+      .field('roomCode', newData.roomCode)
+      .field('roomCapacityId', newData.roomCapacityId)
+      .field('category', newData.category)
+      .field('floor', newData.floor)
+      .field('i', newData.i)
+      .field('occupied_status', newData.occupied_status)
+      .field('overlook', newData.overlook)
+      .field('description', newData.description)
+      .field('bedSetup', newData.bedSetup)
+      .field('connecting', newData.connecting)
+      .field('rateCodeId', newData.rateCodeId);
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');

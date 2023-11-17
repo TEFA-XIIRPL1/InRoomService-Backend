@@ -32,7 +32,6 @@ async function getData(req, res) {
 
   return successResponse(res, `Room ${req.params.id} has been getted successfully`, data, 200);
 }
-
 async function createData(req, res) {
   try {
     const {
