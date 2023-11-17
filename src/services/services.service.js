@@ -55,7 +55,7 @@ const getServiceLatest = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
-    const { name, price, desc, serviceTypeId } = req.body;
+    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     const service = await prisma.service.create({
@@ -65,6 +65,7 @@ const createService = async (req, res) => {
         desc,
         picture: pictureUrl,
         serviceTypeId: parseInt(serviceTypeId, 10),
+        subTypeId: parseInt(subTypeId, 10),
         created_at: new Date(),
       },
     });
@@ -85,7 +86,7 @@ const updateService = async (req, res) => {
     const oldPictureUrl = item.picture;
     const oldPictureSaved = oldPictureUrl.split('/').pop();
     const oldPicturePath = `./uploads/${oldPictureSaved}`;
-    const { name, price, desc, serviceTypeId } = req.body;
+    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     try {
@@ -112,6 +113,7 @@ const updateService = async (req, res) => {
         price: parseInt(price, 10),
         desc,
         serviceTypeId: parseInt(serviceTypeId, 10),
+        subTypeId: parseInt(subTypeId, 10),
         updated_at: new Date(),
       },
     });

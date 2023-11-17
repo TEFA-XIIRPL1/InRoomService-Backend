@@ -25,6 +25,7 @@ describe('Post /services/create-service', () => {
             price: 20000,
             desc: 'Pak Slapur pengen dijual',
             serviceTypeId: 1,
+            subTypeId: 4,
         };
 
         const imagePath = 'F:/InRoomService-Backend/uploads/contoh_gambar.jpg'
@@ -35,6 +36,7 @@ describe('Post /services/create-service', () => {
             .field('price', newService.price)
             .field('desc', newService.desc)
             .field('serviceTypeId', newService.serviceTypeId)
+            .field('subTypeId', newService.subTypeId)
             .attach('picture', imagePath);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('data');
@@ -51,6 +53,7 @@ describe('Put /services/update/', () => {
             price: 20000,
             desc: 'Pak Slapur pengen dijual',
             serviceTypeId: 1,
+            subTypeId: 1,
         };
 
         const imagePath = 'F:/InRoomService-Backend/uploads/contoh_gambar2.jpg'
@@ -61,6 +64,7 @@ describe('Put /services/update/', () => {
             .field('price', updateService.price)
             .field('desc', updateService.desc)
             .field('serviceTypeId', updateService.serviceTypeId)
+            .field('subTypeId', updateService.subTypeId)
             .attach('picture', imagePath);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('data');

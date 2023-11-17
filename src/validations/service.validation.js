@@ -18,6 +18,9 @@ const ServiceInputScheme = z.object({
     serviceTypeId: z.string({
       required_error: 'Service Type ID is Required',
     }),
+    subTypeId: z.string({
+      required_error: 'Sub Type ID is Required',
+    }),
   }),
 });
 

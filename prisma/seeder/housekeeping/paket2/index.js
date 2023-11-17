@@ -1,4 +1,4 @@
-const { lostFoundSeed } = require('./lostFound.seeder');
+const { lostFoundSeed } = require("./lostFound.seeder.js");
 
 async function paketDuaSeed() {
   await lostFoundSeed(); // #1
