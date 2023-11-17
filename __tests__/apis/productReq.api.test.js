@@ -177,9 +177,6 @@ describe('POST /productReq/reject/:id', () => {
     // Make a request to reject the productReq
     const response = await request(app).post(`/productReq/reject/${id}`);
 
-    // Check the response
-    expect(response.statusCode).toBe(200);
-
     // Check if the statusProductReq is updated to REJECTED in the database
     const updatedProductReq = await prisma.productReq.findUnique({
       where: { id },
@@ -192,5 +189,10 @@ describe('POST /productReq/reject/:id', () => {
         id,
       },
     });
+
+    // Check the response
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
   });
 });
+
