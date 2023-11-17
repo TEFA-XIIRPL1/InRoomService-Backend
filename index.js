@@ -27,10 +27,10 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRouter);
 
-app.use(middleware(['Admin']));
+app.use(middleware(['Admin', 'Super Admin']));
 app.use('/guest', guestRouter);
-
 app.use('/productReq', productReqRouter);
+
 
 /* Error handler middleware */
 app.use((req, res, err) => {

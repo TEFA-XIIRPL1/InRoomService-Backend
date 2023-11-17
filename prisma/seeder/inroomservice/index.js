@@ -1,7 +1,7 @@
-const { serviceBatchSeed } = require('./services');
-const { paymentMethodSeed } = require('./payment/paymentMethod.seeder');
-const { paymentSeed } = require('./payment/payment.seeder');
-
+const { serviceBatchSeed } = require("./services");
+const { paymentMethodSeed } = require("./payment/paymentMethod.seeder");
+const { paymentSeed } = require("./payment/payment.seeder");
+const { productReqSeed } = require("./services/productReq.seeder");
 async function inRoomServiceBatchSeed() {
   /* service seeed */
   await serviceBatchSeed();

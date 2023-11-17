@@ -32,6 +32,12 @@ enum RoomType {
   FAMILY
 }
 
+enum StatusProductReq {
+  PENDING
+  REJECTED
+  ACCEPTED
+}
+
 // Front Office Area ==========================================================
 
 model Guest {
@@ -49,7 +55,7 @@ model Guest {
 // This table is for admin & mitra (hotel)
 model Role {
   id         Int      @id @default(autoincrement())
-  name       String   @unique
+  name       String
   users      User[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -80,7 +86,7 @@ model User {
 
 model UserToken {
   id           Int      @id @default(autoincrement())
-  refreshToken String   @unique
+  refreshToken String   @unique @db.VarChar(355)
   user         User     @relation(fields: [userId], references: [id])
   userId       Int
   expired_at   DateTime
@@ -88,7 +94,7 @@ model UserToken {
 
 model GuestToken {
   id           Int      @id @default(autoincrement())
-  refreshToken String   @unique
+  refreshToken String   @unique @db.VarChar(355)
   guest        Guest    @relation(fields: [guestId], references: [id])
   guestId      Int
   expired_at   DateTime
@@ -581,14 +587,15 @@ model lostfound {
 // In Room Service Area =======================================================
 
 model ServiceType {
-  id         Int       @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   name       String
   open       String
   close      String
   services   Service[]
   subTypes   SubType[]
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  ProductReq ProductReq[]
 }
 
 model SubType {
@@ -615,17 +622,20 @@ model Service {
 }
 
 model ProductReq {
-  id         Int      @id @default(autoincrement())
-  title      String
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  type       SubType  @relation(fields: [typeId], references: [id])
-  typeId     Int
-  desc       String
-  price      Int
-  picture    String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id               Int              @id @default(autoincrement())
+  title            String
+  user             User             @relation(fields: [userId], references: [id])
+  userId           Int
+  type             SubType          @relation(fields: [typeId], references: [id])
+  typeId           Int
+  desc             String
+  price            Int
+  picture          String
+  statusProductReq StatusProductReq @default(PENDING)
+  serviceType      ServiceType      @relation(fields: [serviceTypeId], references: [id])
+  serviceTypeId    Int
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
 }
 
 model PaymentMethod {
@@ -672,12 +682,24 @@ model Order {
   total         Float
   ppn           Float
   fees          Float
-  status        OrderStatus
   transaction   Transaction   @relation(fields: [transactionId], references: [id])
   transactionId String        @unique
   orderDetails  OrderDetail[]
+  orderTracks   OrderTrack[]
   created_at    DateTime      @default(now())
   updated_at    DateTime      @updatedAt
+}
+
+model OrderTrack {
+  id         Int         @id @default(autoincrement())
+  order      Order       @relation(fields: [orderId], references: [id])
+  orderId    String
+  status     OrderStatus @default(PENDING)
+  time       DateTime    @default(now())
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  @@unique([orderId, status])
 }
 
 model OrderDetail {
