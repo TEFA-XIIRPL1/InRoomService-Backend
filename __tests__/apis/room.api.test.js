@@ -75,9 +75,9 @@ describe('PUT /room/update/:id', () => {
       rateCodeId: 1,
     };
     const id = await lastId();
-    console.log(/room/update/`${id === 1 ? id : id - 1}`);
+    console.log(`/room/update/${id === 1 ? id : id - 1}`);
     const response = await request(app)
-      .put(/room/update/`${id === 1 ? id : id - 1}`)
+      .put(`/room/update/${id === 1 ? id : id - 1}`)
       .send(newData);
 
     expect(response.statusCode).toBe(200);
@@ -88,7 +88,7 @@ describe('PUT /room/update/:id', () => {
 describe('DELETE /room/delete/:id', () => {
   it('Should delete room with ID', async () => {
     const id = await lastId();
-    const response = await request(app).delete(/room/delete/`${id === 1 ? id : id - 1}`);
+    const response = await request(app).delete(`/room/delete/${id === 1 ? id : id - 1}`);
     expect(response.statusCode).toBe(200);
-  });
+  });
 });

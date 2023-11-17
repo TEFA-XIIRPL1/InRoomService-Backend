@@ -70,7 +70,7 @@ describe('PUT /productReq/update/:id', () => {
 
     const id = await lastId();
     const response = await request(app)
-      .put(/productReq/update/`${id === 2 ? 3 : id}`)
+      .put(`/productReq/update/${id === 2 ? 3 : id}`)
       .field('title', updatedProductReq.title)
       .field('userId', updatedProductReq.userId)
       .field('typeId', updatedProductReq.typeId)
@@ -86,7 +86,7 @@ describe('PUT /productReq/update/:id', () => {
 describe('DELETE /productReq', () => {
   it('Should delete productReq with ID', async () => {
     const id = await lastId();
-    const response = await request(app).delete(/productReq/delete/`${id === 2 ? 3 : id}`);
+    const response = await request(app).delete(`/productReq/delete/${id === 2 ? 3 : id}`);
     expect(response.statusCode).toBe(200);
   });
 });
