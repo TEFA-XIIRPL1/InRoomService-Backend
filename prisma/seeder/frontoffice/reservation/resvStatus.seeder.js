@@ -2,12 +2,14 @@ const { prisma } = require("../../config");
 
 const resvStatus = [
 	{
-		desc: "Guaranted",
-		hexCode: "",
+		description: "Guaranted",
+		rowColor: "#321313",
+		textColor: "#128937"
 	},
 	{
-		desc: "Canceled",
-		hexCode: "#fe0001",
+		description: "Canceled",
+		rowColor: "#384298",
+		textColor: "#985345", 
 	}
 ];
 async function ResvStatusSeed() {
