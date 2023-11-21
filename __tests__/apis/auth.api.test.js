@@ -105,7 +105,7 @@ describe('POST /auth/login', () => {
     expect(response.body.message).toBeTruthy();
   });
 
-  it('Should login with superadmin account and get token', async () => {
+  it('Should login with admin account and get token', async () => {
     const response = await request(app).post('/auth/login').send(loginRequest);
 
     expect(response.statusCode).toBe(200);
