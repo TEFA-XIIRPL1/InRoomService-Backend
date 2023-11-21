@@ -8,6 +8,11 @@ const app = new Express();
 
 app.use('/productReq', require('../../src/routes/productReq.route'));
 
+const lastId = async () => {
+  const productReq = await prisma.productReq.findMany();
+  return productReq[productReq.length - 1].id;
+};
+
 describe('GET /productReq', () => {
   it('Should get all productReq', async () => {
     const response = await request(app).get('/productReq');
@@ -48,6 +53,7 @@ describe('GET /productReq/status/:status', () => {
   });
 });
 
+/* THIS REQUEST NEED CREDENTIALS REQUIREMENT THAT CAN TEST IN UNIT TEST */
 // describe('POST /productReq/create', () => {
 //   it('Should create a new productReq with picture', async () => {
 //     const newProductReq = {
@@ -56,11 +62,10 @@ describe('GET /productReq/status/:status', () => {
 //       typeId: 4,
 //       desc: 'Untuk mengobati luka',
 //       price: 3000,
-//       serviceTypeId: 1,
 //     };
 
 //     const filePath =
-//       'D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+//       'D:/luqman/SMKN 4 BANDUNG XI/PKK/InRoomService/InRoomService-Backend/public/assets/images/betadine.jpg';
 
 //     const response = await request(app)
 //       .post('/productReq/create')
@@ -69,7 +74,6 @@ describe('GET /productReq/status/:status', () => {
 //       .field('typeId', newProductReq.typeId)
 //       .field('desc', newProductReq.desc)
 //       .field('price', newProductReq.price)
-//       .field('serviceTypeId', newProductReq.serviceTypeId)
 //       .attach('picture', filePath);
 
 //     expect(response.statusCode).toBe(201);
@@ -85,20 +89,19 @@ describe('GET /productReq/status/:status', () => {
 //       typeId: 3,
 //       desc: 'Membersihkan rambut anda dari kotoran',
 //       price: 25000,
-//       serviceTypeId: 1,
 //     };
 
 //     const filePath =
-//       'D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/loreal.jpg';
+//       'D:/luqman/SMKN 4 BANDUNG XI/PKK/InRoomService/InRoomService-Backend/public/assets/images/loreal.jpg';
 
+//     const id = await lastId();
 //     const response = await request(app)
-//       .put(`/productReq/update/19`)
+//       .put(`/productReq/update/${id === 2 ? 3 : id}`)
 //       .field('title', updatedProductReq.title)
 //       .field('userId', updatedProductReq.userId)
 //       .field('typeId', updatedProductReq.typeId)
 //       .field('desc', updatedProductReq.desc)
 //       .field('price', updatedProductReq.price)
-//       .field('serviceTypeId', updatedProductReq.serviceTypeId)
 //       .attach('picture', filePath);
 
 //     expect(response.statusCode).toBe(200);
@@ -108,14 +111,15 @@ describe('GET /productReq/status/:status', () => {
 
 // describe('DELETE /productReq', () => {
 //   it('Should delete productReq with ID', async () => {
-//     const response = await request(app).delete('/productReq/delete/5');
+//     const id = await lastId();
+//     const response = await request(app).delete(`/productReq/delete/${id === 2 ? 3 : id}`);
+//     console.log(response);
 //     expect(response.statusCode).toBe(200);
 //   });
 // });
 
 describe('POST /productReq/accept/:id', () => {
   it('Should accept an existing productReq', async () => {
-    
     // Mock productReq data with status PENDING
     const mockProductReq = {
       title: 'Betadine Cina',
@@ -124,7 +128,7 @@ describe('POST /productReq/accept/:id', () => {
       desc: 'Untuk mengobati luka',
       price: 3000,
       serviceTypeId: 1,
-      picture: 'http://localhost:8080/public/assets/images/betadine.jpg'
+      picture: 'http://localhost:8080/public/assets/images/betadine.jpg',
     };
 
     // Insert mock data into the database
@@ -155,9 +159,8 @@ describe('POST /productReq/accept/:id', () => {
 
 describe('POST /productReq/reject/:id', () => {
   it('Should reject an existing productReq', async () => {
-    const filePath =
-      `${process.env.BASE_URL}/public/assets/images/betadine.jpg`;
-    
+    const filePath = `${process.env.BASE_URL}/public/assets/images/betadine.jpg`;
+
     // Mock productReq data with status PENDING
     const mockProductReq = {
       title: 'Betadine',
@@ -166,7 +169,7 @@ describe('POST /productReq/reject/:id', () => {
       desc: 'Untuk mengobati luka',
       price: 3000,
       serviceTypeId: 1,
-      picture: filePath
+      picture: filePath,
     };
 
     // Insert mock data into the database
@@ -195,4 +198,3 @@ describe('POST /productReq/reject/:id', () => {
     expect(response.body).toHaveProperty('data');
   });
 });
-
