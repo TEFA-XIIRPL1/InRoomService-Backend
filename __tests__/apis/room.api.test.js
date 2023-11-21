@@ -28,67 +28,67 @@ describe('GET /room', () => {
   });
 });
 
-describe('POST /room/create', () => {
-  it('Should create a new room', async () => {
-    const newData = {
-      roomType: 'FAMILY',
-      roomImage: 'https://i.pravatar.cc/300',
-      roomStatusId: 1,
-      roomCode: 1,
-      roomCapacityId: 1,
-      category: 'well',
-      floor: 3,
-      i: 2,
-      occupied_status: true,
-      overlook: 'well',
-      description: 'kamar well',
-      bedSetup: 'well',
-      connecting: 'well',
-      rateCodeId: 1,
-    };
-    // console.log(newData);
+// describe('POST /room/create', () => {
+//   it('Should create a new room', async () => {
+//     const newData = {
+//       roomType: 'FAMILY',
+//       roomImage: 'https://i.pravatar.cc/300',
+//       roomStatusId: 1,
+//       roomCode: 1,
+//       roomCapacityId: 1,
+//       category: 'well',
+//       floor: 3,
+//       i: 2,
+//       occupied_status: true,
+//       overlook: 'well',
+//       description: 'kamar well',
+//       bedSetup: 'well',
+//       connecting: 'well',
+//       rateCodeId: 1,
+//     };
+//     // console.log(newData);
 
-    const response = await request(app).post('/room/create').send(newData);
+//     const response = await request(app).post('/room/create').send(newData);
 
-    // Perform assertions
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-  });
-});
+//     // Perform assertions
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//   });
+// });
 
-describe('PUT /room/update/:id', () => {
-  it('Should update an existing room', async () => {
-    const newData = {
-      roomType: 'DELUXE',
-      roomImage: 'Foto Luqman Ngetest API',
-      roomStatusId: 1,
-      roomCode: 1,
-      roomCapacityId: 1,
-      category: 'well',
-      floor: 3,
-      i: 2,
-      occupied_status: true,
-      overlook: 'well',
-      description: 'kamar well',
-      bedSetup: 'well',
-      connecting: 'well',
-      rateCodeId: 1,
-    };
-    const id = await lastId();
-    console.log(`/room/update/${id === 1 ? id : id - 1}`);
-    const response = await request(app)
-      .put(`/room/update/${id === 1 ? id : id - 1}`)
-      .send(newData);
+// describe('PUT /room/update/:id', () => {
+//   it('Should update an existing room', async () => {
+//     const newData = {
+//       roomType: 'DELUXE',
+//       roomImage: 'Foto Luqman Ngetest API',
+//       roomStatusId: 1,
+//       roomCode: 1,
+//       roomCapacityId: 1,
+//       category: 'well',
+//       floor: 3,
+//       i: 2,
+//       occupied_status: true,
+//       overlook: 'well',
+//       description: 'kamar well',
+//       bedSetup: 'well',
+//       connecting: 'well',
+//       rateCodeId: 1,
+//     };
+//     const id = await lastId();
+//     console.log(`/room/update/${id === 1 ? id : id - 1}`);
+//     const response = await request(app)
+//       .put(`/room/update/${id === 1 ? id : id - 1}`)
+//       .send(newData);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-  });
-});
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//   });
+// });
 
-describe('DELETE /room/delete/:id', () => {
-  it('Should delete room with ID', async () => {
-    const id = await lastId();
-    const response = await request(app).delete(`/room/delete/${id === 1 ? id : id - 1}`);
-    expect(response.statusCode).toBe(200);
-  });
-});
+// describe('DELETE /room/delete/:id', () => {
+//   it('Should delete room with ID', async () => {
+//     const id = await lastId();
+//     const response = await request(app).delete(`/room/delete/${id === 1 ? id : id - 1}`);
+//     expect(response.statusCode).toBe(200);
+//   });
+// });

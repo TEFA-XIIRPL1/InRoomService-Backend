@@ -3,9 +3,8 @@ const { prisma } = require("../../config");
 const resvRoom = [
 	{
 		roomId: 1,
-		quantity: 1,
-		note: "overlook must streetview",
 		reservationId: 1,
+		roomMaidId: 1,
 		created_at: new Date(),
 		updated_at: new Date(),
 	},

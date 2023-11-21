@@ -16,7 +16,6 @@ CREATE TABLE `Role` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Role_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -76,17 +75,10 @@ CREATE TABLE `RoomCapacity` (
 -- CreateTable
 CREATE TABLE `RoomStatus` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `description` VARCHAR(191) NOT NULL,
-    `hexCode` VARCHAR(191) NOT NULL,
-    `availHexCode` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `RoomRate` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `rate` DOUBLE NOT NULL,
+    `shortDescription` VARCHAR(191) NOT NULL,
+    `longDescription` TEXT NOT NULL,
+    `rowColor` VARCHAR(191) NOT NULL,
+    `textColor` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -97,17 +89,12 @@ CREATE TABLE `Room` (
     `roomType` ENUM('STANDARD', 'DELUXE', 'FAMILY') NOT NULL,
     `roomImage` VARCHAR(191) NOT NULL,
     `roomStatusId` INTEGER NOT NULL,
-    `roomCode` INTEGER NOT NULL,
-    `category` VARCHAR(191) NOT NULL,
     `floor` INTEGER NOT NULL,
-    `i` INTEGER NOT NULL,
-    `occupied_status` BOOLEAN NOT NULL,
-    `overlook` VARCHAR(191) NOT NULL,
+    `bedSetup` ENUM('KING', 'TWIN', 'SINGLE') NOT NULL,
     `description` VARCHAR(191) NOT NULL,
-    `bedSetup` VARCHAR(191) NOT NULL,
-    `connecting` VARCHAR(191) NOT NULL,
     `roomCapacityId` INTEGER NOT NULL,
-    `rateCodeId` INTEGER NOT NULL,
+    `occupied_status` BOOLEAN NOT NULL,
+    `rate` DOUBLE NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -126,24 +113,51 @@ CREATE TABLE `RoomFacility` (
 -- CreateTable
 CREATE TABLE `Reservation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `agencyName` VARCHAR(191) NOT NULL,
-    `resvQtyId` INTEGER NOT NULL,
     `resvStatusId` INTEGER NOT NULL,
-    `groupReservation` BOOLEAN NOT NULL,
-    `finishedReservation` BOOLEAN NOT NULL,
-    `currency` VARCHAR(191) NOT NULL,
-    `code` VARCHAR(191) NOT NULL,
+    `arrangmentCode` ENUM('RB', 'RO') NOT NULL,
+    `specialTreatmentId` INTEGER NULL,
     `reserverId` INTEGER NOT NULL,
-    `fixRate` BOOLEAN NOT NULL,
-    `m` VARCHAR(191) NOT NULL,
-    `l` VARCHAR(191) NOT NULL,
-    `argtCode` VARCHAR(191) NOT NULL,
-    `day` INTEGER NOT NULL,
-    `night` INTEGER NOT NULL,
-    `arrivalDate` DATETIME(3) NOT NULL,
-    `departureDate` DATETIME(3) NOT NULL,
-    `checkoutDate` DATETIME(3) NULL,
-    `canceledDate` DATETIME(3) NULL,
+    `manyAdult` INTEGER NOT NULL,
+    `manyChild` INTEGER NOT NULL,
+    `reservationRemarks` TEXT NULL,
+    `inHouseIndicator` BOOLEAN NOT NULL,
+    `arrivalDate` DATE NOT NULL,
+    `departureDate` DATE NOT NULL,
+    `checkInDate` DATE NULL,
+    `checkoutDate` DATE NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SpecialTreatment` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(191) NOT NULL,
+    `rowColor` VARCHAR(191) NOT NULL,
+    `textColor` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ResvStatus` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(191) NOT NULL,
+    `rowColor` VARCHAR(191) NOT NULL,
+    `textColor` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ResvRoom` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `reservationId` INTEGER NOT NULL,
+    `roomId` INTEGER NOT NULL,
+    `roomMaidId` INTEGER NOT NULL,
+    `addedPrice` DOUBLE NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -153,124 +167,11 @@ CREATE TABLE `Reservation` (
 -- CreateTable
 CREATE TABLE `Reserver` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `groupName` VARCHAR(191) NULL,
-    `kCard` VARCHAR(191) NOT NULL,
-    `nation` VARCHAR(191) NOT NULL,
-    `purpose` VARCHAR(191) NULL,
-    `resident` VARCHAR(191) NOT NULL,
+    `guestIdentifier` VARCHAR(191) NOT NULL,
+    `resourceName` VARCHAR(191) NOT NULL,
     `guestId` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `ResvFlight` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `arrivalFlight` DATETIME(3) NOT NULL,
-    `departureFlight` DATETIME(3) NOT NULL,
-    `pickedUp` BOOLEAN NOT NULL,
-    `drop` BOOLEAN NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `ResvRoom` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `roomId` INTEGER NOT NULL,
-    `quantity` INTEGER NOT NULL,
-    `note` TEXT NULL,
-    `reservationId` INTEGER NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `ResvQty` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `manyAdult` INTEGER NOT NULL,
-    `manyChild` INTEGER NOT NULL,
-    `manyRoom` INTEGER NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `ResvStatus` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `desc` TEXT NOT NULL,
-    `hexCode` VARCHAR(191) NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Voucher` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `number` INTEGER NOT NULL,
-    `source` VARCHAR(191) NOT NULL,
-    `letterNo` INTEGER NOT NULL,
-    `holderName` VARCHAR(191) NOT NULL,
-    `cardNumber` INTEGER NOT NULL,
-    `securityCode` INTEGER NOT NULL,
-    `expired_at` DATETIME(3) NOT NULL,
-    `updated_at` DATETIME(3) NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Deposit` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `depositTo` VARCHAR(191) NOT NULL,
-    `transactionType` VARCHAR(191) NOT NULL,
-    `balance` DOUBLE NOT NULL,
-    `depositPaid` DOUBLE NOT NULL,
-    `depositDate` DATETIME(3) NOT NULL,
-    `dueDate` DATETIME(3) NOT NULL,
-    `paymentMethodId` INTEGER NOT NULL,
-    `masterBillActive` BOOLEAN NOT NULL,
-    `totalDeposit` DOUBLE NOT NULL,
-    `created_at` DATETIME(3) NOT NULL,
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `LogReservation` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `arrivalDate` DATETIME(3) NOT NULL,
-    `departureDate` DATETIME(3) NOT NULL,
-    `quantity` INTEGER NOT NULL,
-    `manyAdult` INTEGER NOT NULL,
-    `manyChild` INTEGER NOT NULL,
-    `manyRoom` INTEGER NOT NULL,
-    `reserverId` INTEGER NOT NULL,
-    `roomId` INTEGER NOT NULL,
-    `resvStatusId` INTEGER NOT NULL,
-    `fixRate` BOOLEAN NOT NULL,
-    `argtCode` VARCHAR(191) NOT NULL,
-    `rate` DOUBLE NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-    `paymentMethodId` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -278,79 +179,9 @@ CREATE TABLE `LogReservation` (
 -- CreateTable
 CREATE TABLE `LogAvailability` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `room_1` BOOLEAN NOT NULL,
-    `room_2` BOOLEAN NOT NULL,
-    `room_3` BOOLEAN NOT NULL,
-    `room_4` BOOLEAN NOT NULL,
-    `room_5` BOOLEAN NOT NULL,
-    `room_6` BOOLEAN NOT NULL,
-    `room_7` BOOLEAN NOT NULL,
-    `room_8` BOOLEAN NOT NULL,
-    `room_9` BOOLEAN NOT NULL,
-    `room_10` BOOLEAN NOT NULL,
-    `availBeforeAllotment` INTEGER NOT NULL,
-    `allotment` INTEGER NOT NULL,
-    `availAfterAllotment` INTEGER NOT NULL,
-    `totalOverbooking` INTEGER NOT NULL,
-    `ooo` INTEGER NOT NULL,
-    `tentative` INTEGER NOT NULL,
-    `standardRoom` INTEGER NOT NULL,
-    `familyRoom` INTEGER NOT NULL,
-    `deluxeRoom` INTEGER NOT NULL,
-    `occupiedRoom` INTEGER NOT NULL,
-    `cleanedRoom` INTEGER NOT NULL,
-    `dirtyRoom` INTEGER NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CanceledReservation` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `guestId` INTEGER NOT NULL,
-    `resvStatusId` INTEGER NOT NULL,
-    `argtCode` INTEGER NOT NULL,
-    `roomId` INTEGER NOT NULL,
-    `kcard` VARCHAR(191) NOT NULL,
-    `arrivalDate` DATETIME(3) NOT NULL,
-    `departureDate` DATETIME(3) NOT NULL,
-    `resvQtyId` INTEGER NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Comment` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `commentId` VARCHAR(191) NOT NULL,
-    `body` VARCHAR(191) NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL,
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Discrepancy` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `reservationId` INTEGER NOT NULL,
-    `roomId` INTEGER NOT NULL,
-    `foAdult` INTEGER NOT NULL,
-    `foChild` INTEGER NOT NULL,
-    `hkAdult` INTEGER NOT NULL,
-    `hkChild` INTEGER NOT NULL,
-    `hkStatus` INTEGER NOT NULL,
-    `foStatus` INTEGER NOT NULL,
-    `checker` VARCHAR(191) NOT NULL,
-    `explanation` VARCHAR(191) NOT NULL,
-    `commentId` INTEGER NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL,
-    `updatedAt` DATETIME(3) NOT NULL,
+    `roomHistory` JSON NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -566,6 +397,7 @@ CREATE TABLE `Service` (
     `desc` VARCHAR(191) NOT NULL,
     `picture` VARCHAR(191) NOT NULL,
     `serviceTypeId` INTEGER NOT NULL,
+    `subTypeId` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -581,6 +413,8 @@ CREATE TABLE `ProductReq` (
     `desc` VARCHAR(191) NOT NULL,
     `price` INTEGER NOT NULL,
     `picture` VARCHAR(191) NOT NULL,
+    `statusProductReq` ENUM('PENDING', 'REJECTED', 'ACCEPTED') NOT NULL DEFAULT 'PENDING',
+    `serviceTypeId` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -632,12 +466,24 @@ CREATE TABLE `Order` (
     `total` DOUBLE NOT NULL,
     `ppn` DOUBLE NOT NULL,
     `fees` DOUBLE NOT NULL,
-    `status` ENUM('PENDING', 'PROCESS', 'DELIVERED', 'DONE', 'CANCEL') NOT NULL,
     `transactionId` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Order_transactionId_key`(`transactionId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `OrderTrack` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `orderId` VARCHAR(191) NOT NULL,
+    `status` ENUM('PENDING', 'PROCESS', 'DELIVERED', 'DONE', 'CANCEL') NOT NULL DEFAULT 'PENDING',
+    `time` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `OrderTrack_orderId_status_key`(`orderId`, `status`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -670,79 +516,25 @@ ALTER TABLE `Room` ADD CONSTRAINT `Room_roomStatusId_fkey` FOREIGN KEY (`roomSta
 ALTER TABLE `Room` ADD CONSTRAINT `Room_roomCapacityId_fkey` FOREIGN KEY (`roomCapacityId`) REFERENCES `RoomCapacity`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Room` ADD CONSTRAINT `Room_rateCodeId_fkey` FOREIGN KEY (`rateCodeId`) REFERENCES `RoomRate`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `RoomFacility` ADD CONSTRAINT `RoomFacility_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Reservation` ADD CONSTRAINT `Reservation_resvQtyId_fkey` FOREIGN KEY (`resvQtyId`) REFERENCES `ResvQty`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Reservation` ADD CONSTRAINT `Reservation_resvStatusId_fkey` FOREIGN KEY (`resvStatusId`) REFERENCES `ResvStatus`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Reservation` ADD CONSTRAINT `Reservation_specialTreatmentId_fkey` FOREIGN KEY (`specialTreatmentId`) REFERENCES `SpecialTreatment`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Reservation` ADD CONSTRAINT `Reservation_reserverId_fkey` FOREIGN KEY (`reserverId`) REFERENCES `Reserver`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Reserver` ADD CONSTRAINT `Reserver_guestId_fkey` FOREIGN KEY (`guestId`) REFERENCES `Guest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `ResvFlight` ADD CONSTRAINT `ResvFlight_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `ResvRoom` ADD CONSTRAINT `ResvRoom_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ResvRoom` ADD CONSTRAINT `ResvRoom_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Voucher` ADD CONSTRAINT `Voucher_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ResvRoom` ADD CONSTRAINT `ResvRoom_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Deposit` ADD CONSTRAINT `Deposit_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Deposit` ADD CONSTRAINT `Deposit_paymentMethodId_fkey` FOREIGN KEY (`paymentMethodId`) REFERENCES `PaymentMethod`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `LogReservation` ADD CONSTRAINT `LogReservation_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `LogReservation` ADD CONSTRAINT `LogReservation_reserverId_fkey` FOREIGN KEY (`reserverId`) REFERENCES `Reserver`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `LogReservation` ADD CONSTRAINT `LogReservation_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `LogReservation` ADD CONSTRAINT `LogReservation_resvStatusId_fkey` FOREIGN KEY (`resvStatusId`) REFERENCES `ResvStatus`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `LogReservation` ADD CONSTRAINT `LogReservation_paymentMethodId_fkey` FOREIGN KEY (`paymentMethodId`) REFERENCES `PaymentMethod`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CanceledReservation` ADD CONSTRAINT `CanceledReservation_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CanceledReservation` ADD CONSTRAINT `CanceledReservation_guestId_fkey` FOREIGN KEY (`guestId`) REFERENCES `Guest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CanceledReservation` ADD CONSTRAINT `CanceledReservation_resvStatusId_fkey` FOREIGN KEY (`resvStatusId`) REFERENCES `ResvStatus`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CanceledReservation` ADD CONSTRAINT `CanceledReservation_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CanceledReservation` ADD CONSTRAINT `CanceledReservation_resvQtyId_fkey` FOREIGN KEY (`resvQtyId`) REFERENCES `ResvQty`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Discrepancy` ADD CONSTRAINT `Discrepancy_reservationId_fkey` FOREIGN KEY (`reservationId`) REFERENCES `Reservation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Discrepancy` ADD CONSTRAINT `Discrepancy_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Discrepancy` ADD CONSTRAINT `Discrepancy_commentId_fkey` FOREIGN KEY (`commentId`) REFERENCES `Comment`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Reserver` ADD CONSTRAINT `Reserver_guestId_fkey` FOREIGN KEY (`guestId`) REFERENCES `Guest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `CleaningSheet` ADD CONSTRAINT `CleaningSheet_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -826,10 +618,16 @@ ALTER TABLE `SubType` ADD CONSTRAINT `SubType_serviceTypeId_fkey` FOREIGN KEY (`
 ALTER TABLE `Service` ADD CONSTRAINT `Service_serviceTypeId_fkey` FOREIGN KEY (`serviceTypeId`) REFERENCES `ServiceType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Service` ADD CONSTRAINT `Service_subTypeId_fkey` FOREIGN KEY (`subTypeId`) REFERENCES `SubType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `ProductReq` ADD CONSTRAINT `ProductReq_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ProductReq` ADD CONSTRAINT `ProductReq_typeId_fkey` FOREIGN KEY (`typeId`) REFERENCES `SubType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ProductReq` ADD CONSTRAINT `ProductReq_serviceTypeId_fkey` FOREIGN KEY (`serviceTypeId`) REFERENCES `ServiceType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Payment` ADD CONSTRAINT `Payment_paymentMethodId_fkey` FOREIGN KEY (`paymentMethodId`) REFERENCES `PaymentMethod`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -845,6 +643,9 @@ ALTER TABLE `Order` ADD CONSTRAINT `Order_roomId_fkey` FOREIGN KEY (`roomId`) RE
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_transactionId_fkey` FOREIGN KEY (`transactionId`) REFERENCES `Transaction`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `OrderTrack` ADD CONSTRAINT `OrderTrack_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `OrderDetail` ADD CONSTRAINT `OrderDetail_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
