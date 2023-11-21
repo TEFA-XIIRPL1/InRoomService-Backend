@@ -75,10 +75,6 @@ async function login(req, res) {
       },
     });
 
-    if (user === null) {
-      throw new Error('Account not found');
-    }
-
     const password = bcrypt.compareSync(req.body.password, user.password);
     if (!password) {
       return errorResponse(res, 'Invalid Credentials', null, 400);
