@@ -129,6 +129,7 @@ async function getProductReqByStatus(req, res) {
 // Mengupdate product request
 async function update(req, res) {
   const productReqId = parseInt(req.params.id, 10);
+
   const { title, userId, typeId, desc, price, status, serviceTypeId } = req.body;
 
   try {
@@ -139,6 +140,7 @@ async function update(req, res) {
 
     // Retrieve user ID from the decoded token
     const loggedInUserId = decoded.id;
+    if (!loggedInUserId) return errorResponse(res, 'Forbiden credentials is invalid', '', 403);
 
     const productReq = await prisma.productReq.findUnique({
       where: {
@@ -215,8 +217,8 @@ async function update(req, res) {
 // Menghapus product request
 async function remove(req, res) {
   const productReqId = parseInt(req.params.id, 10);
-
   try {
+    console.log('test');
     const productReq = await prisma.productReq.findUnique({
       where: {
         id: productReqId,
@@ -237,7 +239,7 @@ async function remove(req, res) {
     });
     successResponse(res, 'Product request has been deleted successfully', {}, 200);
   } catch (error) {
-    console.error(error);
+    console.error('test');
     errorResponse(res, 'An error occurred while deleting the product request', '', 500);
   }
 }
