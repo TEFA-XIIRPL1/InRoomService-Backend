@@ -289,6 +289,7 @@ async function acceptProductReq(req, res) {
         desc: productReq.desc,
         picture: productReq.picture,
         serviceTypeId: productReq.serviceTypeId,
+        subTypeId: productReq.typeId,
       },
     });
 

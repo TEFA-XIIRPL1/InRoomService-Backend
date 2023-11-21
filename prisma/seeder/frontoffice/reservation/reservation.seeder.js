@@ -2,26 +2,16 @@ const { prisma } = require("../../config");
 
 const reservation = [
 	{
-		agencyName: "Traveloka",
-		resvQtyId: 1,
 		resvStatusId: 1,
-		groupReservation: true,
-		finishedReservation: true,
-		currency: "Rp.2.000.000",
-		code: "AA",
+		arrangmentCode: "RB",
 		reserverId: 1,
-		fixRate: true,
-		m: "m",
-		l: "l",
-		argtCode: "RB",
-		day: 2,
-		night: 1,
+		manyAdult: 2,
+		manyChild: 3,
+		inHouseIndicator: false,
 		arrivalDate: new Date(),
 		departureDate: new Date(),
-		checkoutDate: new Date(),
-		canceledDate: new Date(),
 		created_at: new Date(),
-		updated_at: new Date(),
+		updated_at: new Date()
 	},
 ];
 
