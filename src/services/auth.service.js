@@ -48,7 +48,7 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUniqueOrThrow({
       where: {
         email: req.body.email,
       },
@@ -65,7 +65,9 @@ async function login(req, res) {
         },
       },
     });
+
     if (user === null) {
+      console.log(user);
       throw new Error('Account not found');
     }
 
@@ -88,12 +90,12 @@ async function login(req, res) {
     });
     return successResponse(res, 'Login success', { accessToken: at });
   } catch (error) {
-    if (error.message === 'Email or Password wrong') {
-      return errorResponse(res, error.message, null, 400);
-    }
-
-    if (error.message === 'Account not found') {
-      return errorResponse(res, error.message, null, 404);
+    console.log(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return errorResponse(res, 'Invalid Credentials, User Not Found', null, 404);
+      }
+      return errorResponse(res, 'Invalid request', error, 400);
     }
 
     return errorResponse(res, error.message, null, 500);
