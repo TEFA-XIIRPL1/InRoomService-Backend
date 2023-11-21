@@ -1,10 +1,17 @@
 const request = require('supertest');
 const Express = require('express');
 const path = require('path');
+const { PrismaClient } = require('@prisma/client');
 
+const prisma = new PrismaClient();
 const app = new Express();
 
 app.use('/productReq', require('../../src/routes/productReq.route'));
+
+const lastId = async () => {
+  const productReq = await prisma.productReq.findMany();
+  return productReq[productReq.length - 1].id;
+};
 
 describe('GET /productReq', () => {
   it('Should get all productReq', async () => {
@@ -23,6 +30,7 @@ describe('GET /productReq', () => {
   });
 });
 
+/* THIS REQUEST NEED CREDENTIALS REQUIREMENT THAT CAN TEST IN UNIT TEST */
 // describe('POST /productReq/create', () => {
 //   it('Should create a new productReq with picture', async () => {
 //     const newProductReq = {
@@ -77,9 +85,10 @@ describe('GET /productReq', () => {
 //   });
 // });
 
-// describe('DELETE /productReq', () => {
-//   it('Should delete productReq with ID', async () => {
-//     const response = await request(app).delete('/productReq/delete/3');
-//     expect(response.statusCode).toBe(200);
-//   });
-// });
+describe('DELETE /productReq', () => {
+  it('Should delete productReq with ID', async () => {
+    const id = await lastId();
+    const response = await request(app).delete(`/productReq/delete/${id}`);
+    expect(response.statusCode).toBe(200);
+  });
+});

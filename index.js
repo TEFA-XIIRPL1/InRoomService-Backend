@@ -22,9 +22,11 @@ app.get('/', (req, res) => {
   res.status(200).render('<p >Hello World</p>');
 });
 app.use('/auth', authRouter);
-app.use(middleware(['Admin']));
-app.use('/guest', guestRouter);
+app.use(middleware(['Admin', 'Super Admin']));
+
 app.use('/productReq', productReqRouter);
+
+app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 
 // logger
