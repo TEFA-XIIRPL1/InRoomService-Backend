@@ -76,13 +76,12 @@ async function login(req, res) {
     });
 
     if (user === null) {
-      console.log(user);
       throw new Error('Account not found');
     }
 
     const password = bcrypt.compareSync(req.body.password, user.password);
     if (!password) {
-      throw new Error('Email or Password wrong');
+      return errorResponse(res, 'Invalid Credentials', null, 400);
     }
 
     delete user.password;
@@ -101,7 +100,6 @@ async function login(req, res) {
     });
     return successResponse(res, 'Login success', { accessToken: at });
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return errorResponse(res, 'Invalid Credentials, User Not Found', null, 404);
@@ -152,7 +150,6 @@ async function refresh(req, res) {
     const { at, rt } = generateToken(token.user);
     const encrypted = encrypt(rt);
 
-    console.log(token.user.id);
     await prisma.userToken.create({
       data: {
         userId: token.user.id,
@@ -168,7 +165,6 @@ async function refresh(req, res) {
 
     return successResponse(res, 'Refresh token success', { accessToken: at });
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return errorResponse(res, 'Refresh token invalid or not found', null, 404);
