@@ -1,6 +1,7 @@
 const request = require('supertest');
 const Express = require('express');
 
+
 const app = new Express();
 
 app.use('/services', require('../../src/routes/services.route'));
@@ -28,7 +29,7 @@ describe('Post /services/create-service', () => {
             subTypeId: 4,
         };
 
-        const imagePath = 'F:/InRoomService-Backend/uploads/contoh_gambar.jpg'
+        const imagePath = `${process.env.LOCAL_PATH}/public/assets/images/contoh_gambar.jpg`
 
         const response = await request(app)
             .post('/services/create-service')
@@ -56,7 +57,7 @@ describe('Put /services/update/', () => {
             subTypeId: 1,
         };
 
-        const imagePath = 'F:/InRoomService-Backend/uploads/contoh_gambar2.jpg'
+        const imagePath = `${process.env.LOCAL_PATH}/public/assets/images/contoh_gambar2.jpg`
 
         const response = await request(app)
             .put(`/services/update/?id=${id}`)

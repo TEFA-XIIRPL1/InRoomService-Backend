@@ -85,10 +85,10 @@ const updateService = async (req, res) => {
     });
     const oldPictureUrl = item.picture;
     const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./uploads/${oldPictureSaved}`;
+    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
     const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
-    const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
+    const pictureUrl = `${process.env.BASE_URL}/public/assets/images/${picture}`;
     try {
       await prisma.service.updateMany({
         where: { id: parseInt(id, 10) },
@@ -133,7 +133,7 @@ const deleteService = async (req, res) => {
     });
     const oldPictureUrl = item.picture;
     const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./uploads/${oldPictureSaved}`;
+    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
     try {
       if (oldPicturePath) {
         fs.unlinkSync(oldPicturePath);
