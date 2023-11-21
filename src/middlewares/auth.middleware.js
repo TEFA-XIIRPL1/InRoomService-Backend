@@ -1,3 +1,4 @@
+const { JsonWebTokenError } = require('jsonwebtoken');
 const { prisma } = require('../configs/prisma.config');
 const { verifyToken, errorResponse } = require('../utils/helper.util');
 
@@ -20,9 +21,8 @@ const auth = (roles) => async (req, res, next) => {
 
   const accessToken = authorization.split(' ')[1];
   const decoded = verifyToken(accessToken);
-  console.log(decoded);
-  if (decoded instanceof Error) {
-    return errorResponse(res, 'Forbidden authorization token is not valid', null, 403);
+  if (decoded instanceof JsonWebTokenError) {
+    return errorResponse(res, 'Forbidden, invalid access token', null, 401);
   }
   const user = await prisma.user.findUnique({
     where: {
@@ -38,10 +38,7 @@ const auth = (roles) => async (req, res, next) => {
   });
 
   if (!user) {
-    return errorResponse(res, 'Forbidden, you are not allowed access this resource', null, 403);
-  }
-  if (decoded instanceof Error) {
-    return errorResponse(res, 'Unauthenticated, you are not logged in', null, 401);
+    return errorResponse(res, 'Forbidden, user not found', null, 403);
   }
 
   if (roles !== undefined) {
