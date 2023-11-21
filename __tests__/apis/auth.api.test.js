@@ -88,7 +88,7 @@ describe('POST /auth/register', () => {
 describe('POST /auth/login', () => {
   it('Should login return error because the account is not exist', async () => {
     const response = await request(app).post('/auth/login').send(loginAccountNotExistRequest);
-    console.log(response.text);
+
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBeTruthy();
   });

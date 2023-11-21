@@ -1,15 +1,20 @@
 const fs = require('fs'); // Tambahkan import fs
 const { PrismaClient } = require('@prisma/client');
 const { prisma } = require('../configs/prisma.config');
-const { errorResponse, successResponse, verifyToken } = require('../utils/helper.util');
+const {
+  errorResponse,
+  successResponse,
+  verifyToken,
+  getAccessToken,
+} = require('../utils/helper.util');
 
 const db = new PrismaClient();
 async function create(req, res) {
   try {
-    const { refreshToken } = req.cookies;
+    const accessToken = getAccessToken(req);
 
     // Decode the refresh token
-    const decoded = verifyToken(refreshToken);
+    const decoded = verifyToken(accessToken);
 
     // Retrieve user ID from the decoded token
     const userId = decoded.id;
@@ -130,17 +135,16 @@ async function getProductReqByStatus(req, res) {
 async function update(req, res) {
   const productReqId = parseInt(req.params.id, 10);
 
-  const { title, userId, typeId, desc, price, status, serviceTypeId } = req.body;
+  const { title, typeId, desc, price, status, serviceTypeId } = req.body;
 
   try {
-    const { refreshToken } = req.cookies;
-
+    const accessToken = getAccessToken(req);
     // Decode the refresh token
-    const decoded = verifyToken(refreshToken);
+    const decoded = verifyToken(accessToken);
 
     // Retrieve user ID from the decoded token
-    const loggedInUserId = decoded.id;
-    if (!loggedInUserId) return errorResponse(res, 'Forbiden credentials is invalid', '', 403);
+    const userId = decoded.id;
+    if (!userId) return errorResponse(res, 'Forbiden credentials is invalid', '', 403);
 
     const productReq = await prisma.productReq.findUnique({
       where: {
@@ -150,11 +154,6 @@ async function update(req, res) {
 
     if (!productReq) {
       return errorResponse(res, 'Product request not found', '', 404);
-    }
-
-    // Check if the logged-in user has access to update this productReq
-    if (loggedInUserId !== productReq.userId) {
-      return errorResponse(res, 'You do not have access to update this productReq', '', 403);
     }
 
     if (req.file) {
@@ -206,7 +205,7 @@ async function update(req, res) {
     // Pastikan untuk mengembalikan respons di sini
     return successResponse;
   } catch (error) {
-    console.error(error);
+    console.log(error);
     errorResponse(res, 'An error occurred while updating the product request', '', 500);
 
     // Pastikan untuk mengembalikan respons di sini

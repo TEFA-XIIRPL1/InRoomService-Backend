@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { z } = require('zod');
+const crypto = require('crypto');
 const config = require('../configs/general.config');
 
 function getOffset(listPerPage, currentPage = 1) {
@@ -43,21 +44,18 @@ function generateToken(payload) {
         expiresIn: 60 * 15,
       },
     ),
-    jwt.sign(
-      {
-        id: payload.id,
-        email: payload.email,
-        name: payload.name,
-        role: payload.role,
-      },
-      config.secret,
-      {
-        expiresIn: '30d',
-      },
-    ),
+    crypto.randomBytes(30).toString('hex'),
   ];
 
   return { at, rt };
+}
+
+/**
+ * @param {import('express').Request} req
+ */
+
+function getAccessToken(req) {
+  return req.headers.authorization.split(' ')[1];
 }
 
 function verifyToken(token) {
@@ -93,7 +91,31 @@ function validate(scheme) {
   };
 }
 
+/* Encryption */
+const key = crypto
+  .createHash('sha256')
+  .update(config.cryptoSecret)
+  .digest('base64')
+  .substring(0, 32);
+const iv = crypto.createHash('sha256').update(config.cryptoIv).digest('base64').substring(0, 16);
+
+function encrypt(text) {
+  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return encrypted.toString('hex');
+}
+
+function decrypt(text) {
+  const encryptedText = Buffer.from(text, 'hex');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
+
 module.exports = {
+  getAccessToken,
   validate,
   verifyToken,
   getOffset,
@@ -101,4 +123,6 @@ module.exports = {
   errorResponse,
   successResponse,
   generateToken,
+  encrypt,
+  decrypt,
 };
