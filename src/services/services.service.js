@@ -1,7 +1,13 @@
 const fs = require('fs');
 // const path = require('path');
 const { prisma } = require('../configs/prisma.config');
-const { errorResponse, successResponse } = require('../utils/helper.util');
+const {
+  errorResponse,
+  successResponse,
+  getFilePath,
+  generateAssetUrl,
+  deleteAsset,
+} = require('../utils/helper.util');
 
 const getService = async (req, res) => {
   try {
@@ -72,46 +78,31 @@ const createService = async (req, res) => {
 
     return successResponse(res, 'Create service success', service, 200);
   } catch (error) {
-    console.error(error);
-    return errorResponse(res, 'Create service failed', '', 404);
+    return errorResponse(res, 'Create service failed', error.message, 400);
   }
 };
 
 const updateService = async (req, res) => {
+  const picture = req.file.filename;
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
-    const oldPictureUrl = item.picture;
-    const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
+    if (item == null) {
+      return errorResponse(res, 'Update service failed', `Service with id ${id} is not found`, 404);
+    }
+    const oldPicturePath = getFilePath(item.picture);
+    const pictureUrl = generateAssetUrl(picture);
     const { name, price, desc, serviceTypeId, subTypeId } = req.body;
-    const picture = req.file.filename;
-    const pictureUrl = `${process.env.BASE_URL}/public/assets/images/${picture}`;
-    try {
-      await prisma.service.updateMany({
-        where: { id: parseInt(id, 10) },
-        data: {
-          picture: pictureUrl,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    try {
-      if (oldPicturePath) {
-        fs.unlinkSync(oldPicturePath);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    const service = await prisma.service.updateMany({
+    deleteAsset(oldPicturePath);
+    const service = await prisma.service.update({
       where: { id: parseInt(id, 10) },
       data: {
         name,
         price: parseInt(price, 10),
         desc,
+        picture: pictureUrl,
         serviceTypeId: parseInt(serviceTypeId, 10),
         subTypeId: parseInt(subTypeId, 10),
         updated_at: new Date(),
@@ -120,35 +111,29 @@ const updateService = async (req, res) => {
 
     return successResponse(res, 'update service success', service, 200);
   } catch (error) {
-    console.log(error);
-    return errorResponse(res, 'update service failed', '', 404);
+    fs.unlinkSync(`./public/assets/images/${picture}`);
+    return errorResponse(res, 'update service failed', error.message, 404);
   }
 };
 
 const deleteService = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
-    const oldPictureUrl = item.picture;
-    const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
-    try {
-      if (oldPicturePath) {
-        fs.unlinkSync(oldPicturePath);
-      }
-    } catch (error) {
-      console.log(error);
+    if (item == null) {
+      return errorResponse(res, 'Delete service failed', `Service with id ${id} is not found`, 404);
     }
-    const service = await prisma.service.delete({
+    const oldPicturePath = getFilePath(item.picture);
+    deleteAsset(oldPicturePath);
+    await prisma.service.delete({
       where: { id: parseInt(id, 10) },
     });
 
-    successResponse(res, 'Service yang dipilih telah dihapus', service, 200);
+    return successResponse(res, 'Service yang dipilih telah dihapus', null, 200);
   } catch (error) {
-    console.log(error);
-    errorResponse(res, 'delete service failed', '', 404);
+    return errorResponse(res, 'delete service failed', '', 404);
   }
 };
 
