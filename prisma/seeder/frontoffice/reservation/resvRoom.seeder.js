@@ -4,7 +4,6 @@ const resvRoom = [
 	{
 		roomId: 1,
 		reservationId: 1,
-		roomMaidId: 1,
 		created_at: new Date(),
 		updated_at: new Date(),
 	},
