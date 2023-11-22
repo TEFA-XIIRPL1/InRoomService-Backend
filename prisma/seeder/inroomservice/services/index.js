@@ -1,7 +1,7 @@
-const { productReqSeed } = require('./productReq.seeder');
-const { serviceSeed } = require('./service.seeder');
-const { serviceTypeSeed } = require('./serviceType.seeder');
-const { subTypeSeed } = require('./subType.seeder');
+const { productReqSeed } = require("./productReq.seeder");
+const { serviceSeed } = require("./service.seeder");
+const { serviceTypeSeed } = require("./serviceType.seeder");
+const { subTypeSeed } = require("./subType.seeder");
 
 async function serviceBatchSeed() {
   // the order of seeding is important

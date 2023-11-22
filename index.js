@@ -4,6 +4,9 @@ const config = require('./src/configs/general.config');
 const port = config.port || 3000;
 const { configServer } = require('./src/configs/server.config');
 
+// middlewares
+const middleware = require('./src/middlewares/auth.middleware');
+
 // routers
 const roomRouter = require('./src/routes/room.route');
 const guestRouter = require('./src/routes/guest.route');
@@ -20,6 +23,8 @@ app.get('/', (req, res) => {
   res.status(200).render('<p >Hello World</p>');
 });
 app.use('/auth', authRouter);
+app.use(middleware(['Admin', 'Super Admin']));
+
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
