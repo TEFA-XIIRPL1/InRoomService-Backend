@@ -7,7 +7,7 @@ const services = [
     desc: "5ml",
     picture: "https://i.pravatar.cc/300",
     serviceTypeId: 1,
-    // subTypeId: 4,
+    subTypeId: 4,
     created_at: new Date(),
     updated_at: new Date(),
   },

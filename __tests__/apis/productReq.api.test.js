@@ -66,7 +66,7 @@ describe('PUT /productReq/update/:id', () => {
     };
 
     const filePath =
-      'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/loreal.jpg';
+      'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
 
     const id = await lastId();
     const response = await request(app)
