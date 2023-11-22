@@ -40,10 +40,19 @@ router.get('/', productReqService.getAll);
 // Rute untuk mendapatkan product request berdasarkan ID (READ)
 router.get('/:id', productReqService.getProductReqById);
 
+// Rute untuk mendapatkan product request berdasarkan status (READ)
+router.get('/status/:status', productReqService.getProductReqByStatus);
+
 // Rute untuk mengupdate product request (UPDATE)
 router.put('/update/:id', upload.single('picture'), productReqService.update);
 
 // Rute untuk menghapus product request (DELETE)
 router.delete('/delete/:id', productReqService.remove);
+
+// Rute untuk accept productReq
+router.post('/accept/:id', productReqService.acceptProductReq);
+
+// Rute untuk reject productReq
+router.post('/reject/:id', productReqService.rejectProductReq);
 
 module.exports = router;

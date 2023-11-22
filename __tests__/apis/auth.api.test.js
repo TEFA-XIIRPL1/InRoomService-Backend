@@ -56,9 +56,7 @@ const loginRequest = {
 
 describe('POST /auth/register', () => {
   it('Should return error validation', async () => {
-    const response = await request(app)
-      .post('/auth/register')
-      .send(wrongRegisterRequest);
+    const response = await request(app).post('/auth/register').send(wrongRegisterRequest);
 
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBeTruthy();
@@ -89,9 +87,7 @@ describe('POST /auth/register', () => {
 
 describe('POST /auth/login', () => {
   it('Should login return error because the account is not exist', async () => {
-    const response = await request(app)
-      .post('/auth/login')
-      .send(loginAccountNotExistRequest);
+    const response = await request(app).post('/auth/login').send(loginAccountNotExistRequest);
 
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBeTruthy();
@@ -109,7 +105,7 @@ describe('POST /auth/login', () => {
     expect(response.body.message).toBeTruthy();
   });
 
-  it('Should login with superadmin account and get token', async () => {
+  it('Should login with admin account and get token', async () => {
     const response = await request(app).post('/auth/login').send(loginRequest);
 
     expect(response.statusCode).toBe(200);

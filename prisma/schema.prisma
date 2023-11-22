@@ -241,7 +241,7 @@ model Reserver {
   id              Int           @id @default(autoincrement())
   guestIdentifier String
   resourceName    String
-  guest_id        Guest         @relation(fields: [guestId], references: [id])
+  guest           Guest         @relation(fields: [guestId], references: [id])
   guestId         Int
   reservations    Reservation[]
   created_at      DateTime      @default(now())
@@ -384,6 +384,7 @@ model SubType {
 
 model Service {
   id            Int           @id @default(autoincrement())
+  userId        Int
   name          String
   price         Int
   desc          String

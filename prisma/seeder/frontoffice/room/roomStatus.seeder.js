@@ -1,64 +1,64 @@
-const { prisma } = require("../../config");
+const { prisma } = require('../../config');
 
 const roomStatuses = [
   {
-    shortDescription: "VC",
-    longDescription: "Vacant Clean",
-    rowColor: "#ffffff",
-    textColor: "",
+    shortDescription: 'VC',
+    longDescription: 'Vacant Clean',
+    rowColor: '#ffffff',
+    textColor: '#000000',
   },
   {
-    shortDescription: "VCU",
-    longDescription: "Vacant Clean Uncheck",
-    rowColor: "#ffffff",
-    textColor: "#fdfd06",
+    shortDescription: 'VCU',
+    longDescription: 'Vacant Clean Uncheck',
+    rowColor: '#02feff',
+    textColor: '#000000',
   },
   {
-    shortDescription: "VD", 
-    longDescription: "Vacant Dirty",
-    rowColor: "#10780a",
-    textColor: "",
+    shortDescription: 'VD',
+    longDescription: 'Vacant Dirty',
+    rowColor: '#10780A',
+    textColor: '#ffffff',
   },
   {
-    shortDescription: "OD",
-    longDescription: "Occupied Dirty",
-    rowColor: "#fffc06",
-    textColor: "",
+    shortDescription: 'OD',
+    longDescription: 'Occupied Dirty',
+    rowColor: '#0000F1',
+    textColor: '#ffffff',
   },
   {
-    shortDescription: "OC",
-    longDescription: "Occupied Clean",
-    rowColor: "#f8fdf7",
-    textColor: "",
+    shortDescription: 'OC',
+    longDescription: 'Occupied Clean',
+    rowColor: '#f8fdf7',
+    textColor: '#0000f1',
   },
   {
-    shortDescription: "EAD",
-    longDescription: "EAD",
-    rowColor: "#33e02f",
-    textColor: "",
+    shortDescription: 'ED',
+    longDescription: 'Expected Departure',
+    rowColor: '#FFFC06',
+    textColor: '#F10000',
   },
   {
-    shortDescription: "ED",
-    longDescription: "ED",
-    rowColor: "#020176",
-    textColor: "",
+    shortDescription: 'DnD',
+    longDescription: 'Do not Distrub',
+    rowColor: '#850179',
+    textColor: '#ffffff',
   },
   {
-    shortDescription: "DD",
-    longDescription: "Do Not Distrub",
-    rowColor: "#850179",
-    textColor: "",
+    shortDescription: 'OO',
+    longDescription: 'Out of Order',
+    rowColor: '#000000',
+    textColor: '#F10000',
   },
   {
-    shortDescription: "OOO",
-    longDescription: "Out Of Order",
-    rowColor: "#f80203",
-    textColor: "#f80203",
+    shortDescription: 'OM',
+    longDescription: 'Out of Market',
+    rowColor: '#000000',
+    textColor: '#F10000',
   },
 ];
 
 async function roomStatusSeed() {
-  for (let roomStatus of roomStatuses) {
+  for (const roomStatus of roomStatuses) {
     await prisma.roomStatus.create({
       data: roomStatus,
     });

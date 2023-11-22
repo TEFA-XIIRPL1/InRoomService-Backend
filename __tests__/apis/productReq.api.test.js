@@ -1,15 +1,17 @@
 const request = require('supertest');
 const Express = require('express');
+const path = require('path');
+const { PrismaClient } = require('@prisma/client');
 
+const prisma = new PrismaClient();
 const app = new Express();
 
 app.use('/productReq', require('../../src/routes/productReq.route'));
 
-async function lastId() {
-  const response = await request(app).get('/productReq');
-  const { data } = response.body;
-  return data[data.length - 1].id;
-}
+const lastId = async () => {
+  const productReq = await prisma.productReq.findMany();
+  return productReq[productReq.length - 1].id;
+};
 
 describe('GET /productReq', () => {
   it('Should get all productReq', async () => {
@@ -28,6 +30,7 @@ describe('GET /productReq', () => {
   });
 });
 
+/* THIS REQUEST NEED CREDENTIALS REQUIREMENT THAT CAN TEST IN UNIT TEST */
 // describe('POST /productReq/create', () => {
 //   it('Should create a new productReq with picture', async () => {
 //     const newProductReq = {
@@ -38,8 +41,8 @@ describe('GET /productReq', () => {
 //       price: 3000,
 //     };
 
-//     const filePath =
-//       'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+// const filePath =
+//   'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
 
 //     const response = await request(app)
 //       .post('/productReq/create')
@@ -65,18 +68,18 @@ describe('GET /productReq', () => {
 //       price: 25000,
 //     };
 
-//     const filePath =
-//       'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+// const filePath =
+//   'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
 
-//     const id = await lastId();
-//     const response = await request(app)
-//       .put(`/productReq/update/${id === 2 ? 3 : id}`)
-//       .field('title', updatedProductReq.title)
-//       .field('userId', updatedProductReq.userId)
-//       .field('typeId', updatedProductReq.typeId)
-//       .field('desc', updatedProductReq.desc)
-//       .field('price', updatedProductReq.price)
-//       .attach('picture', filePath);
+// const id = await lastId();
+// const response = await request(app)
+//   .put(`/productReq/update/${id === 2 ? 3 : id}`)
+//   .field('title', updatedProductReq.title)
+//   .field('userId', updatedProductReq.userId)
+//   .field('typeId', updatedProductReq.typeId)
+//   .field('desc', updatedProductReq.desc)
+//   .field('price', updatedProductReq.price)
+//   .attach('picture', filePath);
 
 //     expect(response.statusCode).toBe(200);
 //     expect(response.body).toHaveProperty('data');
