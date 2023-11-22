@@ -65,7 +65,7 @@ describe('GET /productReq/status/:status', () => {
 //     };
 
 //     const filePath =
-//       'D:D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+//       `${process.env.LOCAL_PATH}/public/assets/images/betadine.jpg`;
 
 //     const response = await request(app)
 //       .post('/productReq/create')
@@ -92,7 +92,8 @@ describe('GET /productReq/status/:status', () => {
 //       price: 25000,
 //     };
 
-//     const filePath = 'D:/IKHSAN/Curaweda/InRoomService-Backend/public/assets/images/loreal.jpg';
+//     const filePath =
+//       `${process.env.LOCAL_PATH}/public/assets/images/loreal.jpg`;
 
 //     const response = await request(app)
 //       .put(`/productReq/update/3`)
