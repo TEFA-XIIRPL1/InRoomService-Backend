@@ -22,6 +22,7 @@ describe('GET /services/', () => {
 describe('Post /services/create-service', () => {
     it('Should post a new service', async () => {
         const newService = {
+            userId: 5,
             name: 'slapur',
             price: 20000,
             desc: 'Pak Slapur pengen dijual',
@@ -50,6 +51,7 @@ describe('Put /services/update/', () => {
         const id = latestServiceResponse.body.data[0].id;
         console.log(id);
         const updateService = {
+            userId: 1,
             name: 'slapur',
             price: 20000,
             desc: 'Pak Slapur pengen dijual',

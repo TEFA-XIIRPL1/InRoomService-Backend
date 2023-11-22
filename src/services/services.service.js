@@ -55,11 +55,12 @@ const getServiceLatest = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
-    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
+    const { userId, name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     const service = await prisma.service.create({
       data: {
+        ...(userId ? { UserId: parseInt(userId, 10) } : { userId: 1 }),
         name,
         price: parseInt(price, 10),
         desc,
@@ -86,7 +87,7 @@ const updateService = async (req, res) => {
     const oldPictureUrl = item.picture;
     const oldPictureSaved = oldPictureUrl.split('/').pop();
     const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
-    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
+    const { userId, name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/public/assets/images/${picture}`;
     try {
@@ -109,6 +110,7 @@ const updateService = async (req, res) => {
     const service = await prisma.service.updateMany({
       where: { id: parseInt(id, 10) },
       data: {
+        ...(userId ? { UserId: parseInt(userId, 10) } : { userId: 1 }),
         name,
         price: parseInt(price, 10),
         desc,

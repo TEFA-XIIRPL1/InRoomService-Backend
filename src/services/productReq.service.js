@@ -283,6 +283,7 @@ async function acceptProductReq(req, res) {
     // Tambahkan Service baru dengan informasi dari productReq
     const newService = await prisma.service.create({
       data: {
+        userId: productReq.userId,
         name: productReq.title,
         price: productReq.price,
         desc: productReq.desc,
