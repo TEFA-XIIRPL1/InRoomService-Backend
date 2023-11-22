@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const productReqService = require('../services/productReq.service');
+const { productReqInputValidation } = require('../validations/productReq.validation');
 
 // Rute untuk membuat product request (CREATE)
 let filesaved;
@@ -32,7 +33,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.post('/create', upload.single('picture'), productReqService.create);
+router.post(
+  '/create',
+  upload.single('picture'),
+  productReqInputValidation,
+  productReqService.create,
+);
 
 // Rute untuk mendapatkan semua product requests (READ)
 router.get('/', productReqService.getAll);
@@ -44,7 +50,12 @@ router.get('/:id', productReqService.getProductReqById);
 router.get('/status/:status', productReqService.getProductReqByStatus);
 
 // Rute untuk mengupdate product request (UPDATE)
-router.put('/update/:id', upload.single('picture'), productReqService.update);
+router.put(
+  '/update/:id',
+  upload.single('picture'),
+  productReqInputValidation,
+  productReqService.update,
+);
 
 // Rute untuk menghapus product request (DELETE)
 router.delete('/delete/:id', productReqService.remove);
