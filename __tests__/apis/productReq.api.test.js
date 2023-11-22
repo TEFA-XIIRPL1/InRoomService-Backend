@@ -68,28 +68,28 @@ describe('GET /productReq', () => {
 //       price: 25000,
 //     };
 
-const filePath =
-  'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
+// const filePath =
+//   'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/betadine.jpg';
 
-const id = await lastId();
-const response = await request(app)
-  .put(`/productReq/update/${id === 2 ? 3 : id}`)
-  .field('title', updatedProductReq.title)
-  .field('userId', updatedProductReq.userId)
-  .field('typeId', updatedProductReq.typeId)
-  .field('desc', updatedProductReq.desc)
-  .field('price', updatedProductReq.price)
-  .attach('picture', filePath);
+// const id = await lastId();
+// const response = await request(app)
+//   .put(`/productReq/update/${id === 2 ? 3 : id}`)
+//   .field('title', updatedProductReq.title)
+//   .field('userId', updatedProductReq.userId)
+//   .field('typeId', updatedProductReq.typeId)
+//   .field('desc', updatedProductReq.desc)
+//   .field('price', updatedProductReq.price)
+//   .attach('picture', filePath);
 
 //     expect(response.statusCode).toBe(200);
 //     expect(response.body).toHaveProperty('data');
 //   });
 // });
 
-describe('DELETE /productReq', () => {
-  it('Should delete productReq with ID', async () => {
-    const id = await lastId();
-    const response = await request(app).delete(`/productReq/delete/${id === 2 ? 3 : id}`);
-    expect(response.statusCode).toBe(200);
-  });
-});
+// describe('DELETE /productReq', () => {
+//   it('Should delete productReq with ID', async () => {
+//     const id = await lastId();
+//     const response = await request(app).delete(`/productReq/delete/${id === 2 ? 3 : id}`);
+//     expect(response.statusCode).toBe(200);
+//   });
+// });

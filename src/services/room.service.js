@@ -32,22 +32,18 @@ async function getData(req, res) {
 
   return successResponse(res, `Room ${req.params.id} has been getted successfully`, data, 200);
 }
+
 async function createData(req, res) {
   try {
     const {
       roomType,
       roomStatusId,
-      roomCode,
       roomCapacityId,
-      category,
       floor,
-      i,
-      occupied_status,
-      overlook,
-      description,
       bedSetup,
-      connecting,
-      rateCodeId,
+      description,
+      occupied_status,
+      rate,
     } = req.body;
 
     const filesaved = req.file ? req.file.filename : '';
@@ -58,17 +54,12 @@ async function createData(req, res) {
         roomType,
         roomImage: pictureUrl,
         roomStatusId: parseInt(roomStatusId, 10),
-        roomCode: parseInt(roomCode, 10),
         roomCapacityId: parseInt(roomCapacityId, 10),
-        category,
         floor: parseInt(floor, 10),
-        i: parseInt(i, 10),
-        occupied_status: occupied_status === 'true',
-        overlook,
-        description,
         bedSetup,
-        connecting,
-        rateCodeId: parseInt(rateCodeId, 10),
+        description,
+        occupied_status: occupied_status === 'true',
+        rate: parseInt(rate, 10),
       },
     });
 
@@ -88,19 +79,13 @@ async function updateData(req, res) {
   const roomId = parseInt(req.params.id, 10);
   const {
     roomType,
-    roomImage,
     roomStatusId,
-    roomCode,
     roomCapacityId,
-    category,
     floor,
-    i,
-    occupied_status,
-    overlook,
-    description,
     bedSetup,
-    connecting,
-    rateCodeId,
+    description,
+    occupied_status,
+    rate,
   } = req.body;
 
   try {
@@ -124,17 +109,12 @@ async function updateData(req, res) {
             roomType,
             roomImage: newPictureUrl,
             roomStatusId: parseInt(roomStatusId, 10),
-            roomCode: parseInt(roomCode, 10),
             roomCapacityId: parseInt(roomCapacityId, 10),
-            category,
             floor: parseInt(floor, 10),
-            i: parseInt(i, 10),
-            occupied_status: occupied_status === 'true',
-            overlook,
-            description,
             bedSetup,
-            connecting,
-            rateCodeId: parseInt(rateCodeId, 10),
+            description,
+            occupied_status: occupied_status === 'true',
+            rate: parseInt(rate, 10),
           },
         });
         const oldPictureUrl = data.roomImage;
@@ -142,25 +122,21 @@ async function updateData(req, res) {
         const oldPicturePath = `./public/assets/images/${oldFilesaved}`;
         fs.unlinkSync(oldPicturePath);
       } else {
+        const oldPictureUrl = data.roomImage;
         await prisma.room.update({
           where: {
             id: roomId,
           },
           data: {
             roomType,
-            roomImage,
+            roomImage: oldPictureUrl,
             roomStatusId: parseInt(roomStatusId, 10),
-            roomCode: parseInt(roomCode, 10),
             roomCapacityId: parseInt(roomCapacityId, 10),
-            category,
             floor: parseInt(floor, 10),
-            i: parseInt(i, 10),
-            occupied_status: occupied_status === 'true',
-            overlook,
-            description,
             bedSetup,
-            connecting,
-            rateCodeId: parseInt(rateCodeId, 10),
+            description,
+            occupied_status: occupied_status === 'true',
+            rate: parseInt(rate, 10),
           },
         });
       }

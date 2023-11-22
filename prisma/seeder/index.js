@@ -1,10 +1,10 @@
-const { prisma } = require("./config");
-const { frontOfficeBatchSeed } = require("./frontoffice");
-const { roleSeed } = require("./global/role.seeder");
-const { tokenSeed } = require("./global/token.seeder");
-const { userSeed } = require("./global/user.seeder");
-const { inRoomServiceBatchSeed } = require("./inroomservice");
-const { houseKeepingSeed } = require("./housekeeping");
+const { prisma } = require('./config');
+const { frontOfficeBatchSeed } = require('./frontoffice');
+const { roleSeed } = require('./global/role.seeder');
+const { tokenSeed } = require('./global/token.seeder');
+const { userSeed } = require('./global/user.seeder');
+const { inRoomServiceBatchSeed } = require('./inroomservice');
+const { houseKeepingSeed } = require('./housekeeping');
 
 async function main() {
   /* front office seeed */
@@ -24,7 +24,7 @@ async function main() {
   await inRoomServiceBatchSeed();
   /* in room service end */
 
-  /*House Keeping seed */
+  /* House Keeping seed */
   await houseKeepingSeed();
 }
 
