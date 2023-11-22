@@ -28,6 +28,7 @@ app.use('/productReq', productReqRouter);
 
 app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
+app.use('/uploads', express.static('uploads'));
 
 // logger
 app.listen(port, (err) => {
