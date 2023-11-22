@@ -32,8 +32,7 @@ describe('GET /room', () => {
 
 describe('POST /room/create', () => {
   it('Should create a new room with picture', async () => {
-    const filePath =
-      'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/kamar.jpeg';
+    const filePath = `${process.env.LOCAL_PATH}/public/assets/images/kamar.jpeg`;
 
     const newData = {
       roomType: 'DELUXE',
@@ -66,8 +65,7 @@ describe('POST /room/create', () => {
 
 describe('PUT /room/update/:id', () => {
   it('Should update an existing room with picture', async () => {
-    const filePath =
-      'C:/Users/abil/Documents/Projects/Curaweda/InRoomService-Backend/public/assets/images/kamar.jpeg';
+    const filePath = `${process.env.LOCAL_PATH}/public/assets/images/kamar.jpeg`;
 
     const newData = {
       roomType: 'FAMILY',
@@ -83,7 +81,7 @@ describe('PUT /room/update/:id', () => {
     const id = await lastId();
     console.log(`/room/update/${id}`);
     const response = await request(app)
-      .put(`/room/update/${id === 1 ? id : id - 1}`)
+      .put(`/room/update/${id}`)
       .field('roomType', newData.roomType)
       .attach('roomImage', filePath)
       .field('roomStatusId', newData.roomStatusId)
