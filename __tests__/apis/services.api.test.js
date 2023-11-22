@@ -19,13 +19,9 @@ describe('GET /services/', () => {
 });
 
 // describe('Post /services/create-service', () => {
-//     it('Should post a new service', async () => {
-//         const response = await request(app).get('/services/create-service');
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body).toHaveProperty('data');
-//     })
-// })
-
-// describe('Put /services/update/', () => {
-//     it('Should put an update to a service with id 4')
-// })
+//   it('Should post a new service', async () => {
+//     const response = await request(app).get('/services/create-service');
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//   });
+// });

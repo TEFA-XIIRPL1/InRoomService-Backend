@@ -24,7 +24,7 @@ async function main() {
   await inRoomServiceBatchSeed();
   /* in room service end */
 
-  /*House Keeping seed */
+  /* House Keeping seed */
   await houseKeepingSeed();
 }
 
