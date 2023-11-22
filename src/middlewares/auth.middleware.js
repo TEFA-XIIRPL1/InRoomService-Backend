@@ -22,7 +22,7 @@ const auth = (roles) => async (req, res, next) => {
   const accessToken = authorization.split(' ')[1];
   const decoded = verifyToken(accessToken);
   if (decoded instanceof JsonWebTokenError) {
-    return errorResponse(res, 'Forbidden, invalid access token', null, 401);
+    return errorResponse(res, 'Unauthorized, invalid access token', null, 401);
   }
   const user = await prisma.user.findUnique({
     where: {
