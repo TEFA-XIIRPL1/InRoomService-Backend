@@ -1,5 +1,4 @@
 const fs = require('fs');
-// const path = require('path');
 const { prisma } = require('../configs/prisma.config');
 const {
   errorResponse,
@@ -7,6 +6,8 @@ const {
   getFilePath,
   generateAssetUrl,
   deleteAsset,
+  getAccessToken,
+  verifyToken,
 } = require('../utils/helper.util');
 
 const getService = async (req, res) => {
@@ -61,11 +62,14 @@ const getServiceLatest = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     const service = await prisma.service.create({
       data: {
+        userId: decoded.role.name === 'MITRA' ? decoded.id : 1,
         name,
         price: parseInt(price, 10),
         desc,
@@ -86,6 +90,8 @@ const updateService = async (req, res) => {
   const picture = req.file.filename;
   try {
     const { id } = req.params;
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
@@ -99,6 +105,7 @@ const updateService = async (req, res) => {
     const service = await prisma.service.update({
       where: { id: parseInt(id, 10) },
       data: {
+        userId: decoded.role.name === 'MITRA' ? decoded.id : 1,
         name,
         price: parseInt(price, 10),
         desc,

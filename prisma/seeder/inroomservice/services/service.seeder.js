@@ -2,6 +2,7 @@ const { prisma } = require("../../config");
 
 const services = [
   {
+    userId: 5,
     name: "Betadine Wound",
     price: 8500,
     desc: "5ml",
