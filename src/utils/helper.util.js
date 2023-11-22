@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { z } = require('zod');
 const crypto = require('crypto');
+const fs = require('fs');
 const config = require('../configs/general.config');
 
 function getOffset(listPerPage, currentPage = 1) {
@@ -113,8 +114,30 @@ function decrypt(text) {
   decrypted = Buffer.concat([decrypted, decipher.final()]);
   return decrypted.toString();
 }
+/* Encryption End */
+
+/* File */
+function getFilePath(url) {
+  const fileName = url.split('/').pop();
+  return `./public/assets/images/${fileName}`;
+}
+
+function generateAssetUrl(fileName) {
+  return `${process.env.BASE_URL}/public/assets/images/${fileName}`;
+}
+
+function deleteAsset(path) {
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
+}
+
+/* File End */
 
 module.exports = {
+  deleteAsset,
+  getFilePath,
+  generateAssetUrl,
   getAccessToken,
   validate,
   verifyToken,
