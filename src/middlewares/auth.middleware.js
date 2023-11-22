@@ -9,11 +9,6 @@ const { verifyToken, errorResponse } = require('../utils/helper.util');
  */
 
 const auth = (roles) => async (req, res, next) => {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) {
-    return errorResponse(res, 'Forbidden, refresh token is not found', null, 403);
-  }
-
   const { authorization } = req.headers;
   if (!authorization) {
     return errorResponse(res, 'Forbidden authorization token is not found', null, 403);
