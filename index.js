@@ -22,18 +22,11 @@ app.get('/', (req, res) => {
   res.status(200).render('<p >Hello World</p>');
 });
 app.use('/auth', authRouter);
-
 app.use(middleware(['Admin', 'Super Admin']));
-app.use('/guest', guestRouter);
+
 app.use('/productReq', productReqRouter);
 
-
-/* Error handler middleware */
-app.use((req, res, err) => {
-  const statusCode = err.statusCode || 500;
-  console.error(err.message, err.stack);
-  res.status(statusCode).json({ message: err.message });
-});
+app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 
 // logger

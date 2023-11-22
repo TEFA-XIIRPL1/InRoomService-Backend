@@ -6,6 +6,9 @@ const {
   successResponse,
   generateToken,
   verifyToken,
+  encrypt,
+  getAccessToken,
+  decrypt,
 } = require('../utils/helper.util');
 
 /**
@@ -46,9 +49,15 @@ async function register(req, res) {
   }
 }
 
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+
 async function login(req, res) {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUniqueOrThrow({
       where: {
         email: req.body.email,
       },
@@ -65,35 +74,33 @@ async function login(req, res) {
         },
       },
     });
-    if (user === null) {
-      throw new Error('Account not found');
-    }
 
     const password = bcrypt.compareSync(req.body.password, user.password);
     if (!password) {
-      throw new Error('Email or Password wrong');
+      return errorResponse(res, 'Invalid Credentials', null, 400);
     }
 
     delete user.password;
     const { at, rt } = generateToken(user);
+    const encrypted = encrypt(rt);
     await prisma.userToken.create({
       data: {
         userId: user.id,
         refreshToken: rt,
-        expired_at: new Date(Date.now() + 60 * 15 * 1000),
+        expired_at: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
       },
     });
-    res.cookie('refreshToken', rt, {
+    res.cookie('refreshToken', encrypted, {
       httponly: true,
+      expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
     });
     return successResponse(res, 'Login success', { accessToken: at });
   } catch (error) {
-    if (error.message === 'Email or Password wrong') {
-      return errorResponse(res, error.message, null, 400);
-    }
-
-    if (error.message === 'Account not found') {
-      return errorResponse(res, error.message, null, 404);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return errorResponse(res, 'Invalid Credentials, User Not Found', null, 404);
+      }
+      return errorResponse(res, 'Invalid request', error, 400);
     }
 
     return errorResponse(res, error.message, null, 500);
@@ -107,34 +114,49 @@ async function refresh(req, res) {
       throw new Error('Forbidden refresh token is not found');
     }
 
-    const user = verifyToken(refreshToken);
-    await prisma.user.findUniqueOrThrow({
+    const decrypted = decrypt(refreshToken);
+    const token = await prisma.userToken.findUniqueOrThrow({
       where: {
-        id: user.id,
+        refreshToken: decrypted,
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
-
     await prisma.userToken.delete({
       where: {
-        refreshToken,
-        userId: user.id,
+        refreshToken: decrypted,
       },
     });
 
     res.clearCookie('refreshToken');
 
-    const { at, rt } = generateToken(user);
+    const { at, rt } = generateToken(token.user);
+    const encrypted = encrypt(rt);
 
     await prisma.userToken.create({
       data: {
-        userId: user.id,
+        userId: token.user.id,
         refreshToken: rt,
-        expired_at: new Date(Date.now() + 60 * 15 * 1000),
+        expired_at: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
       },
     });
 
-    res.cookie('refreshToken', rt, {
+    res.cookie('refreshToken', encrypted, {
       httponly: true,
+      expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
     });
 
     return successResponse(res, 'Refresh token success', { accessToken: at });
@@ -152,11 +174,13 @@ async function refresh(req, res) {
 async function logout(req, res) {
   try {
     const { refreshToken } = req.cookies;
+    const accessToken = getAccessToken(req);
 
-    const decoded = verifyToken(refreshToken);
+    const decrypted = decrypt(refreshToken);
+    const decoded = verifyToken(accessToken);
     await prisma.userToken.delete({
       where: {
-        refreshToken,
+        refreshToken: decrypted,
         userId: decoded.id,
       },
     });
