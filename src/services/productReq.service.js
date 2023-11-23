@@ -238,7 +238,7 @@ async function remove(req, res) {
     });
     successResponse(res, 'Product request has been deleted successfully', {}, 200);
   } catch (error) {
-    console.error('test');
+    console.log(error);
     errorResponse(res, 'An error occurred while deleting the product request', '', 500);
   }
 }

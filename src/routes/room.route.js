@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const room = require('../services/room.service');
+const { roomInputValidation } = require('../validations/room.validation');
 
 let filesaved;
 const storage = multer.diskStorage({
@@ -36,9 +37,9 @@ const upload = multer({ storage });
 router.get('/', room.getAllData);
 router.get('/:id', room.getData);
 
-router.post('/create', upload.single('roomImage'), room.createData);
+router.post('/create', upload.single('roomImage'), roomInputValidation, room.createData);
 
-router.put('/update/:id', upload.single('roomImage'), room.updateData);
+router.put('/update/:id', upload.single('roomImage'), roomInputValidation, room.updateData);
 
 router.delete('/delete/:id', room.deleteData);
 
