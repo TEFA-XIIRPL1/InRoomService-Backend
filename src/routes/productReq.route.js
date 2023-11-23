@@ -2,40 +2,20 @@
 const express = require('express');
 
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const productReqService = require('../services/productReq.service');
 const { productReqInputValidation } = require('../validations/productReq.validation');
+const { setStorage, setFileFilter, uploadFile } = require('../utils/helper.util');
 
 // Rute untuk membuat product request (CREATE)
-let filesaved;
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, './public/assets/images');
-  },
-  filename(req, file, cb) {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname);
-    filesaved = `${file.originalname.replace(ext, '')}-${uniqueSuffix}${ext}`;
-    cb(null, filesaved);
-  },
-  fileFilter(req, file, cb) {
-    if (
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'image/jpeg'
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only PNG, JPG, and JPEG files are allowed.'), false);
-    }
-  },
-});
-const upload = multer({ storage });
-
+const storage = setStorage();
+const fileFilter = setFileFilter();
+const options = {
+  storage,
+  fileFilter,
+};
 router.post(
   '/create',
-  upload.single('picture'),
+  uploadFile(options, 'picture'),
   productReqInputValidation,
   productReqService.create,
 );
@@ -52,7 +32,7 @@ router.get('/status/:status', productReqService.getProductReqByStatus);
 // Rute untuk mengupdate product request (UPDATE)
 router.put(
   '/update/:id',
-  upload.single('picture'),
+  uploadFile(options, 'picture'),
   productReqInputValidation,
   productReqService.update,
 );
