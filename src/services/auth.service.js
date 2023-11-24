@@ -23,6 +23,7 @@ async function register(req, res) {
       data: {
         ...req.body,
         password: bcrypt.hashSync(req.body.password, 10),
+        roleId: parseInt(req.body.roleId, 10),
       },
       select: {
         name: true,

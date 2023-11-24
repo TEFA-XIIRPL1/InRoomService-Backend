@@ -41,6 +41,7 @@ app.use((req, res, err) => {
   res.status(statusCode).json({ message: err.message });
 });
 app.use('/services', servicesRouter);
+app.use('/uploads', express.static('uploads'));
 
 // logger
 app.listen(port, (err) => {

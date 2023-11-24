@@ -2,37 +2,23 @@
 const express = require('express');
 
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const productReqService = require('../services/productReq.service');
+const { productReqInputValidation } = require('../validations/productReq.validation');
+const { setStorage, setFileFilter, uploadFile } = require('../utils/helper.util');
 
 // Rute untuk membuat product request (CREATE)
-let filesaved;
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, './public/assets/images');
-  },
-  filename(req, file, cb) {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname);
-    filesaved = `${file.originalname.replace(ext, '')}-${uniqueSuffix}${ext}`;
-    cb(null, filesaved);
-  },
-  fileFilter(req, file, cb) {
-    if (
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'image/jpeg'
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only PNG, JPG, and JPEG files are allowed.'), false);
-    }
-  },
-});
-const upload = multer({ storage });
-
-router.post('/create', upload.single('picture'), productReqService.create);
+const storage = setStorage();
+const fileFilter = setFileFilter();
+const options = {
+  storage,
+  fileFilter,
+};
+router.post(
+  '/create',
+  uploadFile(options, 'picture'),
+  productReqInputValidation,
+  productReqService.create,
+);
 
 // Rute untuk mendapatkan semua product requests (READ)
 router.get('/', productReqService.getAll);
@@ -44,7 +30,12 @@ router.get('/:id', productReqService.getProductReqById);
 router.get('/status/:status', productReqService.getProductReqByStatus);
 
 // Rute untuk mengupdate product request (UPDATE)
-router.put('/update/:id', upload.single('picture'), productReqService.update);
+router.put(
+  '/update/:id',
+  uploadFile(options, 'picture'),
+  productReqInputValidation,
+  productReqService.update,
+);
 
 // Rute untuk menghapus product request (DELETE)
 router.delete('/delete/:id', productReqService.remove);
