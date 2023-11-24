@@ -11,6 +11,11 @@ const roles = [
     created_at: new Date(),
     updated_at: new Date(),
   },
+  {
+    name: "Room Boy",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
 ];
 
 async function roleSeed() {

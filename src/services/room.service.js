@@ -1,10 +1,15 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable camelcase */
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const Express = require('express');
 const { prisma } = require('../configs/prisma.config');
-const { errorResponse, successResponse } = require('../utils/helper.util');
+const {
+  errorResponse,
+  successResponse,
+  deleteAsset,
+  getFilePath,
+  generateAssetUrl,
+} = require('../utils/helper.util');
 
 const app = Express();
 app.use(bodyParser.json());
@@ -27,27 +32,22 @@ async function getData(req, res) {
   });
 
   if (!data) {
-    return errorResponse(res, 'User not found', '', 404);
+    return errorResponse(res, 'Room not found', '', 404);
   }
 
   return successResponse(res, `Room ${req.params.id} has been getted successfully`, data, 200);
 }
+
 async function createData(req, res) {
   try {
     const {
       roomType,
       roomStatusId,
-      roomCode,
       roomCapacityId,
-      category,
       floor,
-      i,
-      occupied_status,
-      overlook,
-      description,
       bedSetup,
-      connecting,
-      rateCodeId,
+      description,
+      occupied_status,
       rate,
     } = req.body;
 
@@ -59,18 +59,12 @@ async function createData(req, res) {
         roomType,
         roomImage: pictureUrl,
         roomStatusId: parseInt(roomStatusId, 10),
-        roomCode: parseInt(roomCode, 10),
         roomCapacityId: parseInt(roomCapacityId, 10),
-        category,
         floor: parseInt(floor, 10),
-        i: parseInt(i, 10),
-        occupied_status: occupied_status === 'true',
-        overlook,
-        description,
         bedSetup,
-        connecting,
-        rateCodeId: parseInt(rateCodeId, 10),
-        rate,
+        description,
+        occupied_status: occupied_status === 'true',
+        rate: parseInt(rate, 10),
       },
     });
 
@@ -82,7 +76,7 @@ async function createData(req, res) {
     );
   } catch (error) {
     console.log(error);
-    return errorResponse(res, 'An error occurred while creating the product request', '', 404);
+    return errorResponse(res, 'An error occurred while creating the Room', '', 404);
   }
 }
 
@@ -90,21 +84,17 @@ async function updateData(req, res) {
   const roomId = parseInt(req.params.id, 10);
   const {
     roomType,
-    roomImage,
     roomStatusId,
-    roomCode,
     roomCapacityId,
-    category,
     floor,
-    i,
-    occupied_status,
-    overlook,
-    description,
     bedSetup,
-    connecting,
-    rateCodeId,
+    description,
+    occupied_status,
+    rate,
   } = req.body;
 
+  const picture = req.file ?? null;
+  const pictureUrl = picture !== null ? generateAssetUrl(picture) : null;
   try {
     const data = await prisma.room.findUnique({
       where: {
@@ -112,65 +102,32 @@ async function updateData(req, res) {
       },
     });
 
-    if (!data) {
-      errorResponse(res, 'Product request not found', '', 404);
-    } else {
-      if (req.file) {
-        const newFilesaved = req.file.filename;
-        const newPictureUrl = `${process.env.BASE_URL}/public/assets/images/${newFilesaved}`;
-        await prisma.room.update({
-          where: {
-            id: roomId,
-          },
-          data: {
-            roomType,
-            roomImage: newPictureUrl,
-            roomStatusId: parseInt(roomStatusId, 10),
-            roomCode: parseInt(roomCode, 10),
-            roomCapacityId: parseInt(roomCapacityId, 10),
-            category,
-            floor: parseInt(floor, 10),
-            i: parseInt(i, 10),
-            occupied_status: occupied_status === 'true',
-            overlook,
-            description,
-            bedSetup,
-            connecting,
-            rateCodeId: parseInt(rateCodeId, 10),
-          },
-        });
-        const oldPictureUrl = data.roomImage;
-        const oldFilesaved = oldPictureUrl.split('/').pop();
-        const oldPicturePath = `./public/assets/images/${oldFilesaved}`;
-        fs.unlinkSync(oldPicturePath);
-      } else {
-        await prisma.room.update({
-          where: {
-            id: roomId,
-          },
-          data: {
-            roomType,
-            roomImage,
-            roomStatusId: parseInt(roomStatusId, 10),
-            roomCode: parseInt(roomCode, 10),
-            roomCapacityId: parseInt(roomCapacityId, 10),
-            category,
-            floor: parseInt(floor, 10),
-            i: parseInt(i, 10),
-            occupied_status: occupied_status === 'true',
-            overlook,
-            description,
-            bedSetup,
-            connecting,
-            rateCodeId: parseInt(rateCodeId, 10),
-          },
-        });
-      }
-      successResponse(res, `Product request ${roomId} has been updated successfully`, data, 200);
+    if (data === null) {
+      return errorResponse(res, 'Room not found', '', 404);
     }
+    const oldPicturePath = getFilePath(data.roomImage);
+    const response = await prisma.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        roomType,
+        roomImage: pictureUrl !== null ? pictureUrl : data.roomImage,
+        roomStatusId: parseInt(roomStatusId, 10),
+        roomCapacityId: parseInt(roomCapacityId, 10),
+        floor: parseInt(floor, 10),
+        bedSetup,
+        description,
+        occupied_status: occupied_status === 'true',
+        rate: parseInt(rate, 10),
+      },
+    });
+    if (picture !== null) {
+      deleteAsset(oldPicturePath);
+    }
+    return successResponse(res, `Room ${roomId} has been updated successfully`, response, 200);
   } catch (error) {
-    console.error(error);
-    errorResponse(res, 'An error occurred while updating the product request', '', 500);
+    return errorResponse(res, 'An error occurred while updating the Room', '', 500);
   }
 }
 
@@ -184,10 +141,8 @@ async function deleteData(req, res) {
       },
     });
     if (!data) {
-      const pictureUrl = data.roomImage;
-      const filesaved = pictureUrl.split('/').pop();
-      const picturePath = `./public/assets/images/${filesaved}`;
-      fs.unlinkSync(picturePath);
+      const oldPicturePath = getFilePath(data.roomImage);
+      deleteAsset(oldPicturePath);
     }
 
     await prisma.room.delete({
@@ -195,10 +150,9 @@ async function deleteData(req, res) {
         id: roomId,
       },
     });
-    successResponse(res, 'Product request has been deleted successfully', {}, 200);
+    successResponse(res, 'Room has been deleted successfully', {}, 200);
   } catch (error) {
-    console.error(error);
-    errorResponse(res, 'An error occurred while deleting the product request', '', 500);
+    errorResponse(res, 'An error occurred while deleting the Room', '', 500);
   }
 }
 

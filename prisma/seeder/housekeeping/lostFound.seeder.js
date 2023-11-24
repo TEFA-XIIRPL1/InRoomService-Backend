@@ -1,4 +1,4 @@
-const { prisma } = require("../../config");
+const { prisma } = require("../config");
 
 const lostFounds = [
   {
@@ -8,6 +8,7 @@ const lostFounds = [
     reported: new Date(),
     location: "Lobby",
     description: "Room cleaned thoroughly, ready for next guest.",
+    picture: "https://random.imagecdn.app/500/300",
     created_at: new Date(),
     updated_at: new Date(),
   },
@@ -15,7 +16,7 @@ const lostFounds = [
 
 async function lostFoundSeed() {
     for (let lostFound of lostFounds) {
-      await prisma.lostfound.create({
+      await prisma.lostFound.create({
         data: lostFound,
       });
     }
