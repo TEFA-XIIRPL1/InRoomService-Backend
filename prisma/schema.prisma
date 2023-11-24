@@ -384,7 +384,7 @@ model SubType {
 
 model Service {
   id            Int           @id @default(autoincrement())
-  userId        Int           
+  userId        Int
   name          String
   price         Int
   desc          String
