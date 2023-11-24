@@ -3,8 +3,12 @@ const bodyParser = require('body-parser');
 const Express = require('express');
 const cookieParser = require('cookie-parser');
 const { prisma } = require('../configs/prisma.config');
-
-const { errorResponse, successResponse, verifyToken } = require('../utils/helper.util');
+const {
+  errorResponse,
+  successResponse,
+  verifyToken,
+  getAccessToken,
+} = require('../utils/helper.util');
 
 const app = Express();
 app.use(cookieParser());
@@ -12,18 +16,9 @@ app.use(bodyParser.json());
 
 async function getData(req, res) {
   try {
-    const { refreshToken } = req.cookies || {};
+    const accessToken = getAccessToken(req);
 
-    if (!refreshToken) {
-      return errorResponse(res, 'Refresh token not found in cookies', '', 400);
-    }
-
-    const decoded = verifyToken(refreshToken);
-
-    if (!decoded || !decoded.id) {
-      return errorResponse(res, 'Invalid or missing user ID in the token', '', 400);
-    }
-
+    const decoded = verifyToken(accessToken);
     const data = await prisma.user.findUnique({
       where: {
         id: decoded.id,
@@ -53,19 +48,9 @@ async function getData(req, res) {
 
 async function updateNumber(req, res) {
   try {
-    const { refreshToken } = req.cookies;
     const { phone } = req.body;
-
-    if (!refreshToken) {
-      return errorResponse(res, 'Refresh token not found in cookies', '', 400);
-    }
-
-    const decoded = verifyToken(refreshToken);
-
-    if (!decoded || !decoded.id) {
-      return errorResponse(res, 'Invalid or missing user ID in the token', '', 400);
-    }
-
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const data = await prisma.user.update({
       where: {
         id: decoded.id,
@@ -93,19 +78,9 @@ async function updateNumber(req, res) {
 
 async function updateEmail(req, res) {
   try {
-    const { refreshToken } = req.cookies;
     const { email } = req.body;
-
-    if (!refreshToken) {
-      return errorResponse(res, 'Refresh token not found in cookies', '', 400);
-    }
-
-    const decoded = verifyToken(refreshToken);
-
-    if (!decoded || !decoded.id) {
-      return errorResponse(res, 'Invalid or missing user ID in the token', '', 400);
-    }
-
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const data = await prisma.user.update({
       where: {
         id: decoded.id,
@@ -133,19 +108,9 @@ async function updateEmail(req, res) {
 
 async function updateNIK(req, res) {
   try {
-    const { refreshToken } = req.cookies;
     const { nik } = req.body;
-
-    if (!refreshToken) {
-      return errorResponse(res, 'Refresh token not found in cookies', '', 400);
-    }
-
-    const decoded = verifyToken(refreshToken);
-
-    if (!decoded || !decoded.id) {
-      return errorResponse(res, 'Invalid or missing user ID in the token', '', 400);
-    }
-
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const data = await prisma.user.update({
       where: {
         id: decoded.id,
