@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 const express = require('express');
 
 const router = express.Router();

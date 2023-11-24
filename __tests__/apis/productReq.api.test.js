@@ -23,8 +23,8 @@ describe('GET /productReq', () => {
 });
 
 describe('GET /productReq', () => {
-  it('Should get productReq with id 2', async () => {
-    const response = await request(app).get('/productReq/2');
+  it('Should get productReq with id 1', async () => {
+    const response = await request(app).get('/productReq/1');
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
   });
