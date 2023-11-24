@@ -2,44 +2,24 @@
 const express = require('express');
 
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const room = require('../services/room.service');
 const { roomInputValidation } = require('../validations/room.validation');
+const { setStorage, setFileFilter, uploadFile } = require('../utils/helper.util');
 
-let filesaved;
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, './public/assets/images');
-  },
-  filename(req, file, cb) {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname);
-    filesaved = `${file.originalname.replace(ext, '')}-${uniqueSuffix}${ext}`;
-    cb(null, filesaved);
-  },
-  fileFilter(req, file, cb) {
-    if (
-      !(
-        file.mimetype === 'image/png' ||
-        file.mimetype === 'image/jpg' ||
-        file.mimetype === 'image/jpeg'
-      )
-    ) {
-      cb(new Error('Invalid file type. Only PNG, JPG, and JPEG are allowed.'), false);
-    } else {
-      cb(null, true);
-    }
-  },
-});
-const upload = multer({ storage });
+// Rute untuk membuat product request (CREATE)
+const storage = setStorage();
+const fileFilter = setFileFilter();
+const options = {
+  storage,
+  fileFilter,
+};
 
 router.get('/', room.getAllData);
 router.get('/:id', room.getData);
 
-router.post('/create', upload.single('roomImage'), roomInputValidation, room.createData);
+router.post('/create', uploadFile(options, 'roomImage'), roomInputValidation, room.createData);
 
-router.put('/update/:id', upload.single('roomImage'), roomInputValidation, room.updateData);
+router.put('/update/:id', uploadFile(options, 'roomImage'), roomInputValidation, room.updateData);
 
 router.delete('/delete/:id', room.deleteData);
 
