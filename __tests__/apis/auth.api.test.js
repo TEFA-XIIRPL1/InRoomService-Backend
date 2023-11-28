@@ -16,7 +16,7 @@ const registerRequest = {
   birthday: new Date('1990-01-01'),
   username: 'super admin',
   password: 'password',
-  roleId: 1,
+  roleId: '1',
 };
 const wrongRegisterRequest = {
   name: 'User',
@@ -28,7 +28,7 @@ const wrongRegisterRequest = {
   birthday: new Date('1990-01-01'),
   username: 'super admin',
   password: 'password',
-  roleId: 1,
+  roleId: '1',
 };
 
 const registerResponse = {
@@ -115,7 +115,7 @@ describe('POST /auth/login', () => {
   });
 });
 
-/* Note: If you want this test to get a successful response, you must try it manually because this request must have a refresh token from a secret cookie that can't be gotten from the unit test*/
+/* Note: If you want this test to get a successful response, you must try it manually because this request must have a refresh token from a secret cookie that can't be gotten from the unit test */
 
 describe('GET /auth/refresh', () => {
   it('Should return forbidden because the refresh toke is not found', async () => {

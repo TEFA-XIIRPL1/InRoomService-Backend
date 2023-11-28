@@ -9,11 +9,6 @@ const { verifyToken, errorResponse } = require('../utils/helper.util');
  */
 
 const auth = (roles) => async (req, res, next) => {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) {
-    return errorResponse(res, 'Forbidden, refresh token is not found', null, 403);
-  }
-
   const { authorization } = req.headers;
   if (!authorization) {
     return errorResponse(res, 'Forbidden authorization token is not found', null, 403);
@@ -22,7 +17,7 @@ const auth = (roles) => async (req, res, next) => {
   const accessToken = authorization.split(' ')[1];
   const decoded = verifyToken(accessToken);
   if (decoded instanceof JsonWebTokenError) {
-    return errorResponse(res, 'Forbidden, invalid access token', null, 401);
+    return errorResponse(res, 'Unauthorized, invalid access token', null, 401);
   }
   const user = await prisma.user.findUnique({
     where: {

@@ -1,11 +1,51 @@
 const jwt = require('jsonwebtoken');
 const { z } = require('zod');
 const crypto = require('crypto');
+const fs = require('fs');
+const multer = require('multer');
 const config = require('../configs/general.config');
 
 function getOffset(listPerPage, currentPage = 1) {
   return (currentPage - 1) * [listPerPage];
 }
+
+function paginator(defaultOptions) {
+  return async function (model, options, args = { where: undefined }) {
+    try {
+      const page = Number(options?.page || defaultOptions.page) || 1;
+      const perPage = Number(options?.perPage || defaultOptions.perPage) || 10;
+
+      const skip = (page - 1) * perPage;
+      const [data, total] = await Promise.all([
+        model.findMany({
+          ...args,
+          skip,
+          take: perPage,
+        }),
+        model.count({
+          where: args.where,
+        }),
+      ]);
+      const lastPage = Math.ceil(total / perPage);
+
+      return {
+        data,
+        meta: {
+          total,
+          currPage: page,
+          lastPage,
+          perPage,
+          prev: page > 1 ? page - 1 : null,
+          next: page < lastPage ? page + 1 : null,
+        },
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+}
+
+const paginate = paginator({ perPage: 10 });
 
 function emptyOrRows(rows) {
   if (!rows) {
@@ -113,8 +153,83 @@ function decrypt(text) {
   decrypted = Buffer.concat([decrypted, decipher.final()]);
   return decrypted.toString();
 }
+/* Encryption End */
+
+/* File */
+function getFilePath(url) {
+  const fileName = url.split('/').pop();
+  return `./public/assets/images/${fileName}`;
+}
+
+function generateAssetUrl(fileName) {
+  return `${process.env.BASE_URL}/public/assets/images/${fileName}`;
+}
+
+function deleteAsset(path) {
+  if (fs.existsSync(path) && !path.split('/').pop() === '') {
+    fs.unlinkSync(path);
+  }
+}
+
+function setStorage() {
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'public/assets/images');
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`);
+    },
+  });
+
+  return storage;
+}
+
+function setFileFilter(
+  allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'],
+  fileSize = 1024 * 1024 * 5,
+) {
+  return (req, file, cb) => {
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error('Incorrect file');
+      error.code = 'INCORRECT_FILETYPE';
+      cb(error, false);
+    } else if (file.size > fileSize) {
+      const error = new Error('File size is too large');
+      error.code = 'FILE_TOO_LARGE';
+      cb(error, false);
+    }
+    cb(null, true);
+  };
+}
+
+/**
+ * @param {import('multer').Options} options
+ */
+
+function uploadFile(options, fieldName = 'image') {
+  const upload = multer(options).single(fieldName);
+
+  return (req, res, next) =>
+    upload(req, res, (err) => {
+      if (err) {
+        return errorResponse(res, err.message, null, 422);
+      }
+      if (!req.file) {
+        return errorResponse(res, `${fieldName} is required`, null, 400);
+      }
+      return next();
+    });
+}
+
+/* File End */
 
 module.exports = {
+  uploadFile,
+  setFileFilter,
+  setStorage,
+  deleteAsset,
+  getFilePath,
+  generateAssetUrl,
   getAccessToken,
   validate,
   verifyToken,
@@ -125,4 +240,5 @@ module.exports = {
   generateToken,
   encrypt,
   decrypt,
+  paginate,
 };

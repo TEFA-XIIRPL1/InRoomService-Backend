@@ -1,4 +1,3 @@
-const fs = require('fs'); // Tambahkan import fs
 const { PrismaClient } = require('@prisma/client');
 const { prisma } = require('../configs/prisma.config');
 const {
@@ -6,6 +5,8 @@ const {
   successResponse,
   verifyToken,
   getAccessToken,
+  deleteAsset,
+  paginate,
 } = require('../utils/helper.util');
 
 const db = new PrismaClient();
@@ -25,7 +26,7 @@ async function create(req, res) {
       return errorResponse(res, 'All required fields must be provided', '', 400);
     }
 
-    const filesaved = req.file ? req.file.filename : '';
+    const filesaved = req.file.filename;
 
     const pictureUrl = `${process.env.BASE_URL}/public/assets/images/${filesaved}`;
 
@@ -52,17 +53,21 @@ async function create(req, res) {
 
     return Promise.resolve(productReq);
   } catch (error) {
-    console.error(error);
-    errorResponse(res, 'An error occurred while creating the product request', '', 500);
-    return Promise.reject(error);
+    return errorResponse(res, 'Failed to create product request', error.message, 400);
   }
 }
 
 // Mendapatkan semua product requests
 async function getAll(req, res) {
   try {
-    const productReqs = await prisma.productReq.findMany();
-    successResponse(res, 'Product requests retrieved successfully', productReqs, 200);
+    const { page } = req.query;
+    const { perPage } = req.query;
+    const { productReq } = prisma;
+    const data = await paginate(productReq, {
+      page,
+      perPage,
+    });
+    successResponse(res, 'Product requests retrieved successfully', data, 200);
   } catch (error) {
     console.log(error);
     console.error(error);
@@ -179,8 +184,9 @@ async function update(req, res) {
       // Hapus file gambar lama
       const oldPictureUrl = productReq.picture;
       const oldFilesaved = oldPictureUrl.split('/').pop();
+      console.log(oldFilesaved);
       const oldPicturePath = `./public/assets/images/${oldFilesaved}`;
-      fs.unlinkSync(oldPicturePath);
+      deleteAsset(oldPicturePath);
     } else {
       await prisma.productReq.update({
         where: {
@@ -228,7 +234,7 @@ async function remove(req, res) {
       const pictureUrl = productReq.picture;
       const filesaved = pictureUrl.split('/').pop();
       const picturePath = `./public/assets/images/${filesaved}`;
-      fs.unlinkSync(picturePath);
+      deleteAsset(picturePath);
     }
 
     await prisma.productReq.delete({

@@ -1,7 +1,15 @@
 const fs = require('fs');
-// const path = require('path');
 const { prisma } = require('../configs/prisma.config');
-const { errorResponse, successResponse } = require('../utils/helper.util');
+const {
+  errorResponse,
+  successResponse,
+  getFilePath,
+  generateAssetUrl,
+  deleteAsset,
+  getAccessToken,
+  verifyToken,
+  paginate,
+} = require('../utils/helper.util');
 
 const getService = async (req, res) => {
   try {
@@ -9,23 +17,33 @@ const getService = async (req, res) => {
     const { id } = req.query;
     const { search } = req.query;
     const { sort } = req.query || 'asc';
-    const service = await prisma.service.findMany({
-      where: {
-        serviceTypeId: parseInt(serviceTypeId, 10),
-        ...(id ? { id: parseInt(id, 10) } : {}),
-        name: {
-          contains: search,
+    const { page } = req.query;
+    const { perPage } = req.query;
+    const { service } = prisma;
+    const data = await paginate(
+      service,
+      {
+        page,
+        perPage,
+      },
+      {
+        where: {
+          serviceTypeId: parseInt(serviceTypeId, 10),
+          ...(id ? { id: parseInt(id, 10) } : {}),
+          name: {
+            contains: search,
+          },
+        },
+        orderBy: {
+          id: sort,
         },
       },
-      orderBy: {
-        id: sort,
-      },
-    });
+    );
 
     return successResponse(
       res,
       `Service ${req.params.serviceTypeId} has been getted successfully`,
-      service,
+      data,
       200,
     );
   } catch (error) {
@@ -55,12 +73,14 @@ const getServiceLatest = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
-    const { userId, name, price, desc, serviceTypeId, subTypeId } = req.body;
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
+    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
     const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
     const service = await prisma.service.create({
       data: {
-        ...(userId ? { UserId: parseInt(userId, 10) } : { userId: 1 }),
+        userId: decoded.role.name === 'MITRA' ? decoded.id : 1,
         name,
         price: parseInt(price, 10),
         desc,
@@ -73,47 +93,34 @@ const createService = async (req, res) => {
 
     return successResponse(res, 'Create service success', service, 200);
   } catch (error) {
-    console.error(error);
-    return errorResponse(res, 'Create service failed', '', 404);
+    return errorResponse(res, 'Create service failed', error.message, 400);
   }
 };
 
 const updateService = async (req, res) => {
+  const picture = req.file.filename;
   try {
-    const { id } = req.query;
+    const { id } = req.params;
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
     const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
-    const oldPictureUrl = item.picture;
-    const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
-    const { userId, name, price, desc, serviceTypeId, subTypeId } = req.body;
-    const picture = req.file.filename;
-    const pictureUrl = `${process.env.BASE_URL}/public/assets/images/${picture}`;
-    try {
-      await prisma.service.updateMany({
-        where: { id: parseInt(id, 10) },
-        data: {
-          picture: pictureUrl,
-        },
-      });
-    } catch (error) {
-      console.log(error);
+    if (item == null) {
+      return errorResponse(res, 'Update service failed', `Service with id ${id} is not found`, 404);
     }
-    try {
-      if (oldPicturePath) {
-        fs.unlinkSync(oldPicturePath);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    const service = await prisma.service.updateMany({
+    const oldPicturePath = getFilePath(item.picture);
+    const pictureUrl = generateAssetUrl(picture);
+    const { name, price, desc, serviceTypeId, subTypeId } = req.body;
+    deleteAsset(oldPicturePath);
+    const service = await prisma.service.update({
       where: { id: parseInt(id, 10) },
       data: {
-        ...(userId ? { UserId: parseInt(userId, 10) } : { userId: 1 }),
+        userId: decoded.role.name === 'MITRA' ? decoded.id : 1,
         name,
         price: parseInt(price, 10),
         desc,
+        picture: pictureUrl,
         serviceTypeId: parseInt(serviceTypeId, 10),
         subTypeId: parseInt(subTypeId, 10),
         updated_at: new Date(),
@@ -122,35 +129,29 @@ const updateService = async (req, res) => {
 
     return successResponse(res, 'update service success', service, 200);
   } catch (error) {
-    console.log(error);
-    return errorResponse(res, 'update service failed', '', 404);
+    fs.unlinkSync(`./public/assets/images/${picture}`);
+    return errorResponse(res, 'update service failed', error.message, 404);
   }
 };
 
 const deleteService = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     const item = await prisma.service.findUnique({
       where: { id: parseInt(id, 10) },
     });
-    const oldPictureUrl = item.picture;
-    const oldPictureSaved = oldPictureUrl.split('/').pop();
-    const oldPicturePath = `./public/assets/images/${oldPictureSaved}`;
-    try {
-      if (oldPicturePath) {
-        fs.unlinkSync(oldPicturePath);
-      }
-    } catch (error) {
-      console.log(error);
+    if (item == null) {
+      return errorResponse(res, 'Delete service failed', `Service with id ${id} is not found`, 404);
     }
-    const service = await prisma.service.delete({
+    const oldPicturePath = getFilePath(item.picture);
+    deleteAsset(oldPicturePath);
+    await prisma.service.delete({
       where: { id: parseInt(id, 10) },
     });
 
-    successResponse(res, 'Service yang dipilih telah dihapus', service, 200);
+    return successResponse(res, 'Service yang dipilih telah dihapus', null, 200);
   } catch (error) {
-    console.log(error);
-    errorResponse(res, 'delete service failed', '', 404);
+    return errorResponse(res, 'delete service failed', '', 404);
   }
 };
 
