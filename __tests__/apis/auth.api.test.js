@@ -115,7 +115,7 @@ describe('POST /auth/login', () => {
   });
 });
 
-/* Note: If you want this test to get a successful response, you must try it manually because this request must have a refresh token from a secret cookie that can't be gotten from the unit test*/
+/* Note: If you want this test to get a successful response, you must try it manually because this request must have a refresh token from a secret cookie that can't be gotten from the unit test */
 
 describe('GET /auth/refresh', () => {
   it('Should return forbidden because the refresh toke is not found', async () => {

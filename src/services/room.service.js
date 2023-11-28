@@ -42,6 +42,7 @@ async function createData(req, res) {
   try {
     const {
       roomType,
+      roomStatus,
       roomStatusId,
       roomCapacityId,
       floor,
@@ -58,6 +59,7 @@ async function createData(req, res) {
       data: {
         roomType,
         roomImage: pictureUrl,
+        roomStatus,
         roomStatusId: parseInt(roomStatusId, 10),
         roomCapacityId: parseInt(roomCapacityId, 10),
         floor: parseInt(floor, 10),

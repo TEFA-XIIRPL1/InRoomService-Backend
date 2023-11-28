@@ -13,6 +13,7 @@ const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
 const productReqRouter = require('./src/routes/productReq.route');
+const profileRouter = require('./src/routes/profile.route');
 
 // server
 const app = express();
@@ -27,8 +28,8 @@ app.use(middleware(['Admin', 'Super Admin']));
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
+app.use('/profile', profileRouter);
 app.use('/services', servicesRouter);
-
 /* Error handler middleware */
 app.use((req, res, err) => {
   const statusCode = err.statusCode || 500;

@@ -1,8 +1,8 @@
 const request = require('supertest');
-const express = require('express');
+const Express = require('express');
 const bodyParser = require('body-parser');
 
-const app = new express();
+const app = new Express();
 app.use(bodyParser.json());
 app.use('/room', require('../../src/routes/room.route'));
 
