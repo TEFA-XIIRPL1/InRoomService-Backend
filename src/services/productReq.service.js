@@ -117,6 +117,7 @@ async function getProductReqByStatus(req, res) {
         title: true,
         price: true,
         typeId: true,
+        serviceTypeId: true,
         user: {
           select: {
             name: true,
@@ -125,7 +126,7 @@ async function getProductReqByStatus(req, res) {
       },
     });
 
-    if (productReq) {
+    if (productReq.length > 0) {
       successResponse(
         res,
         `Product request with status ${status} has been retrieved successfully`,
