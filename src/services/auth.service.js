@@ -58,6 +58,7 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
+    console.log('test', req.body);
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         email: req.body.email,

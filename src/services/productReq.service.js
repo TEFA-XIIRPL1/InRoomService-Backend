@@ -112,6 +112,7 @@ async function getProductReqByStatus(req, res) {
         statusProductReq: status,
       },
       select: {
+        id: true,
         user: {
           select: {
             name: true,

@@ -365,21 +365,18 @@ model ServiceType {
   open       String
   close      String
   services   Service[]
-  subTypes   SubType[]
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
   ProductReq ProductReq[]
 }
 
 model SubType {
-  id            Int          @id @default(autoincrement())
-  name          String
-  serviceType   ServiceType  @relation(fields: [serviceTypeId], references: [id])
-  serviceTypeId Int
-  services      Service[]
-  productReqs   ProductReq[]
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @updatedAt
+  id          Int          @id @default(autoincrement())
+  name        String
+  services    Service[]
+  productReqs ProductReq[]
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
 }
 
 model Service {

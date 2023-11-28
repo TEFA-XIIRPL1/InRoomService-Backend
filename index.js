@@ -14,6 +14,8 @@ const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
 const productReqRouter = require('./src/routes/productReq.route');
 const profileRouter = require('./src/routes/profile.route');
+const subTypeRouter = require('./src/routes/subType.route');
+
 
 // server
 const app = express();
@@ -29,6 +31,8 @@ app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
 app.use('/profile', profileRouter);
+app.use('/subType', subTypeRouter);
+app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 /* Error handler middleware */
 app.use((req, res, err) => {
