@@ -9,6 +9,44 @@ function getOffset(listPerPage, currentPage = 1) {
   return (currentPage - 1) * [listPerPage];
 }
 
+function paginator(defaultOptions) {
+  return async function (model, options, args = { where: undefined }) {
+    try {
+      const page = Number(options?.page || defaultOptions.page) || 1;
+      const perPage = Number(options?.perPage || defaultOptions.perPage) || 10;
+
+      const skip = (page - 1) * perPage;
+      const [data, total] = await Promise.all([
+        model.findMany({
+          ...args,
+          skip,
+          take: perPage,
+        }),
+        model.count({
+          where: args.where,
+        }),
+      ]);
+      const lastPage = Math.ceil(total / perPage);
+
+      return {
+        data,
+        meta: {
+          total,
+          currPage: page,
+          lastPage,
+          perPage,
+          prev: page > 1 ? page - 1 : null,
+          next: page < lastPage ? page + 1 : null,
+        },
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+}
+
+const paginate = paginator({ perPage: 10 });
+
 function emptyOrRows(rows) {
   if (!rows) {
     return [];
@@ -202,4 +240,5 @@ module.exports = {
   generateToken,
   encrypt,
   decrypt,
+  paginate,
 };

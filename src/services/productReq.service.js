@@ -6,6 +6,7 @@ const {
   verifyToken,
   getAccessToken,
   deleteAsset,
+  paginate,
 } = require('../utils/helper.util');
 
 const db = new PrismaClient();
@@ -59,8 +60,14 @@ async function create(req, res) {
 // Mendapatkan semua product requests
 async function getAll(req, res) {
   try {
-    const productReqs = await prisma.productReq.findMany();
-    successResponse(res, 'Product requests retrieved successfully', productReqs, 200);
+    const { page } = req.query;
+    const { perPage } = req.query;
+    const { productReq } = prisma;
+    const data = await paginate(productReq, {
+      page,
+      perPage,
+    });
+    successResponse(res, 'Product requests retrieved successfully', data, 200);
   } catch (error) {
     console.log(error);
     console.error(error);

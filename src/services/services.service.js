@@ -8,6 +8,7 @@ const {
   deleteAsset,
   getAccessToken,
   verifyToken,
+  paginate,
 } = require('../utils/helper.util');
 
 const getService = async (req, res) => {
@@ -16,23 +17,33 @@ const getService = async (req, res) => {
     const { id } = req.query;
     const { search } = req.query;
     const { sort } = req.query || 'asc';
-    const service = await prisma.service.findMany({
-      where: {
-        serviceTypeId: parseInt(serviceTypeId, 10),
-        ...(id ? { id: parseInt(id, 10) } : {}),
-        name: {
-          contains: search,
+    const { page } = req.query;
+    const { perPage } = req.query;
+    const { service } = prisma;
+    const data = await paginate(
+      service,
+      {
+        page,
+        perPage,
+      },
+      {
+        where: {
+          serviceTypeId: parseInt(serviceTypeId, 10),
+          ...(id ? { id: parseInt(id, 10) } : {}),
+          name: {
+            contains: search,
+          },
+        },
+        orderBy: {
+          id: sort,
         },
       },
-      orderBy: {
-        id: sort,
-      },
-    });
+    );
 
     return successResponse(
       res,
       `Service ${req.params.serviceTypeId} has been getted successfully`,
-      service,
+      data,
       200,
     );
   } catch (error) {

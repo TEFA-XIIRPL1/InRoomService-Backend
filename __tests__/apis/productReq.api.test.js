@@ -18,7 +18,7 @@ describe('GET /productReq', () => {
     const response = await request(app).get('/productReq');
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.data.data).toBeInstanceOf(Array);
   });
 });
 

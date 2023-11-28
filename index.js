@@ -29,8 +29,9 @@ app.use(middleware(['Admin', 'Super Admin']));
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
-app.use(middleware());
 app.use('/profile', profileRouter);
+app.use('/services', servicesRouter);
+
 
 // route
 
@@ -40,8 +41,6 @@ app.use((req, res, err) => {
   console.error(err.message, err.stack);
   res.status(statusCode).json({ message: err.message });
 });
-app.use('/services', servicesRouter);
-app.use('/uploads', express.static('uploads'));
 
 // logger
 app.listen(port, (err) => {
