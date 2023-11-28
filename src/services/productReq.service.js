@@ -116,6 +116,7 @@ async function getProductReqByStatus(req, res) {
         picture: true,
         title: true,
         price: true,
+        typeId: true,
         user: {
           select: {
             name: true,
