@@ -25,16 +25,11 @@ app.get('/', (req, res) => {
 });
 app.use('/auth', authRouter);
 app.use(middleware(['Admin', 'Super Admin']));
-
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
 app.use('/profile', profileRouter);
 app.use('/services', servicesRouter);
-
-
-// route
-
 /* Error handler middleware */
 app.use((req, res, err) => {
   const statusCode = err.statusCode || 500;

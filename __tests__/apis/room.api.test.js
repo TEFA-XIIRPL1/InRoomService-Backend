@@ -78,7 +78,6 @@ describe('PUT /room/update/:id', () => {
     };
 
     const id = await lastId();
-    console.log(`/room/update/${id}`);
     const response = await request(app)
       .put(`/room/update/${id}`)
       .field('roomType', newData.roomType)
