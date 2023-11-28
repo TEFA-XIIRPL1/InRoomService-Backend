@@ -9,7 +9,6 @@ app.use('/room', require('../../src/routes/room.route'));
 async function lastId() {
   const response = await request(app).get('/room');
   const { data } = response.body;
-  console.log(data);
   return data[data.length - 1].id;
 }
 
@@ -78,7 +77,6 @@ describe('PUT /room/update/:id', () => {
     };
 
     const id = await lastId();
-    console.log(`/room/update/${id}`);
     const response = await request(app)
       .put(`/room/update/${id}`)
       .field('roomType', newData.roomType)

@@ -24,12 +24,10 @@ app.get('/', (req, res) => {
 });
 app.use('/auth', authRouter);
 app.use(middleware(['Admin', 'Super Admin']));
-
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
-
-// route
+app.use('/services', servicesRouter);
 
 /* Error handler middleware */
 app.use((req, res, err) => {
@@ -37,8 +35,6 @@ app.use((req, res, err) => {
   console.error(err.message, err.stack);
   res.status(statusCode).json({ message: err.message });
 });
-app.use('/services', servicesRouter);
-app.use('/uploads', express.static('uploads'));
 
 // logger
 app.listen(port, (err) => {
