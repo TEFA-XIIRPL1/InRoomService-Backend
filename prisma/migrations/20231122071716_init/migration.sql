@@ -312,7 +312,6 @@ CREATE TABLE `ServiceType` (
 CREATE TABLE `SubType` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `serviceTypeId` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -529,9 +528,6 @@ ALTER TABLE `ExtraBed` ADD CONSTRAINT `ExtraBed_roomId_fkey` FOREIGN KEY (`roomI
 
 -- AddForeignKey
 ALTER TABLE `LostFound` ADD CONSTRAINT `LostFound_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SubType` ADD CONSTRAINT `SubType_serviceTypeId_fkey` FOREIGN KEY (`serviceTypeId`) REFERENCES `ServiceType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Service` ADD CONSTRAINT `Service_serviceTypeId_fkey` FOREIGN KEY (`serviceTypeId`) REFERENCES `ServiceType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

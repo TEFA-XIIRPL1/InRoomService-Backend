@@ -107,6 +107,7 @@ async function getProductReqByStatus(req, res) {
         statusProductReq: status,
       },
       select: {
+        id: true,
         user: {
           select: {
             name: true,
@@ -217,7 +218,6 @@ async function update(req, res) {
 async function remove(req, res) {
   const productReqId = parseInt(req.params.id, 10);
   try {
-    console.log('test');
     const productReq = await prisma.productReq.findUnique({
       where: {
         id: productReqId,
@@ -238,7 +238,6 @@ async function remove(req, res) {
     });
     successResponse(res, 'Product request has been deleted successfully', {}, 200);
   } catch (error) {
-    console.error('test');
     errorResponse(res, 'An error occurred while deleting the product request', '', 500);
   }
 }

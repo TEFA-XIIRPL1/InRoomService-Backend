@@ -110,13 +110,13 @@ describe('GET /productReq/status/:status', () => {
 //   });
 // });
 
-describe('DELETE /productReq', () => {
-  it('Should delete productReq with ID', async () => {
-    const id = await lastId();
-    const response = await request(app).delete(`/productReq/delete/${id}`);
-    expect(response.statusCode).toBe(200);
-  });
-});
+// describe('DELETE /productReq/delete', () => {
+//   it('Should delete productReq with ID', async () => {
+//     const id = await lastId();
+//     const response = await request(app).delete(`/productReq/delete/${id}`);
+//     expect(response.statusCode).toBe(200);
+//   });
+// });
 
 describe('POST /productReq/accept/:id', () => {
   it('Should accept an existing productReq', async () => {

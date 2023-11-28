@@ -12,6 +12,8 @@ const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
 const productReqRouter = require('./src/routes/productReq.route');
+const subTypeRouter = require('./src/routes/subType.route');
+
 
 // server
 const app = express();
@@ -25,7 +27,7 @@ app.use('/auth', authRouter);
 app.use(middleware(['Admin', 'Super Admin']));
 
 app.use('/productReq', productReqRouter);
-
+app.use('/subType', subTypeRouter);
 app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 app.use('/uploads', express.static('uploads'));
