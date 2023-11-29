@@ -53,6 +53,19 @@ describe('GET /productReq/status/:status', () => {
   });
 });
 
+describe('Product Requests by User ID', () => {
+  test('Get product requests for a specific user should return a list', async () => {
+    const userId = 1;
+
+    const response = await request(app)
+      .get(`/productReq/user/${userId}`)
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
+  });
+
+});
+
 /* THIS REQUEST NEED CREDENTIALS REQUIREMENT THAT CAN TEST IN UNIT TEST */
 // describe('POST /productReq/create', () => {
 //   it('Should create a new productReq with picture', async () => {

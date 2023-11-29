@@ -102,6 +102,47 @@ async function getProductReqById(req, res) {
   }
 }
 
+async function getProductReqByUserId(req, res) {
+  const userId = parseInt(req.params.userId, 10);
+
+  try {
+    // Tambahkan filter where berdasarkan userId pada saat mengambil data productReq
+    const productReq = await prisma.productReq.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        picture: true,
+        title: true,
+        price: true,
+        typeId: true,
+        desc: true,
+        serviceTypeId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (productReq.length > 0) {
+      successResponse(
+        res,
+        `Product requests for user ${userId} have been retrieved successfully`,
+        productReq,
+        200,
+      );
+    } else {
+      errorResponse(res, 'Product requests not found for the user', '', 404);
+    }
+  } catch (error) {
+    console.error(error);
+    errorResponse(res, 'An error occurred while fetching product request data', '', 500);
+  }
+}
+
 // Mendapatkan product request berdasarkan Status
 async function getProductReqByStatus(req, res) {
   const { status } = req.params;
@@ -367,4 +408,5 @@ module.exports = {
   remove,
   acceptProductReq,
   rejectProductReq,
+  getProductReqByUserId,
 };

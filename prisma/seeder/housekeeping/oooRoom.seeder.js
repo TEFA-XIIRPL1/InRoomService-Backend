@@ -17,7 +17,7 @@ const oooRooms = [
 ];
 
 async function oooRoomSeed() {
-  for (const oooRoom of oooRooms) {
+  for (let oooRoom of oooRooms) {
     await prisma.oooRoom.create({
       data: oooRoom,
     });

@@ -3,13 +3,18 @@ const { prisma } = require("../../config");
 const resvStatus = [
 	{
 		description: "Guaranted",
-		rowColor: "#321313",
-		textColor: "#128937"
+		rowColor: "#16a75c",
+		textColor: "#ffffffD"
 	},
 	{
-		description: "Canceled",
-		rowColor: "#384298",
-		textColor: "#985345", 
+		description: "6 PM",
+		rowColor: "#fffc06",
+		textColor: "#000000", 
+	},
+	{
+		description: "Tentative",
+		rowColor: "#fe0001",
+		textColor: "#ffffff"
 	}
 ];
 async function ResvStatusSeed() {

@@ -46,4 +46,7 @@ router.post('/accept/:id', productReqService.acceptProductReq);
 // Rute untuk reject productReq
 router.post('/reject/:id', productReqService.rejectProductReq);
 
+// Rute untuk menampilkan productReq berdasarkan User Id
+router.get('/user/:userId', productReqService.getProductReqByUserId);
+
 module.exports = router;
