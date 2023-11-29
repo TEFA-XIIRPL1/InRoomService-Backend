@@ -23,8 +23,9 @@ describe('GET /productReq', () => {
 });
 
 describe('GET /productReq', () => {
-  it('Should get productReq with id 1', async () => {
-    const response = await request(app).get('/productReq/1');
+  it('Should get newest productReq', async () => {
+    const id = await lastId();
+    const response = await request(app).get(`/productReq/${id}`);
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
   });

@@ -16,7 +16,6 @@ const registerRequest = {
   birthday: new Date('1990-01-01'),
   username: 'super admin',
   password: 'password',
-  roleId: '1',
 };
 const wrongRegisterRequest = {
   name: 'User',
@@ -28,7 +27,6 @@ const wrongRegisterRequest = {
   birthday: new Date('1990-01-01'),
   username: 'super admin',
   password: 'password',
-  roleId: '1',
 };
 
 const registerResponse = {

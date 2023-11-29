@@ -32,9 +32,6 @@ const RegisterSchema = z.object({
         required_error: 'Phone is required',
       })
       .min(11, 'Phone must be 11 characters'),
-    roleId: z.string({
-      required_error: 'Role is required',
-    }),
     nik: z
       .string({
         required_error: 'NIK is required',
