@@ -89,6 +89,7 @@ model User {
   password    String
   role        Role         @relation(fields: [roleId], references: [id])
   roleId      Int
+  service     Service[]
   productReqs ProductReq[]
   cleanRooms  CleanRoom[]
   Tokens      UserToken[]
@@ -383,6 +384,7 @@ model SubType {
 model Service {
   id            Int           @id @default(autoincrement())
   userId        Int
+  user          User          @relation(fields: [userId], references: [id])
   name          String
   price         Int
   desc          String

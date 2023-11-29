@@ -6,6 +6,7 @@ const {
   verifyToken,
   getAccessToken,
   deleteAsset,
+  paginate,
 } = require('../utils/helper.util');
 
 const db = new PrismaClient();
@@ -59,8 +60,14 @@ async function create(req, res) {
 // Mendapatkan semua product requests
 async function getAll(req, res) {
   try {
-    const productReqs = await prisma.productReq.findMany();
-    successResponse(res, 'Product requests retrieved successfully', productReqs, 200);
+    const { page } = req.query;
+    const { perPage } = req.query;
+    const { productReq } = prisma;
+    const data = await paginate(productReq, {
+      page,
+      perPage,
+    });
+    successResponse(res, 'Product requests retrieved successfully', data, 200);
   } catch (error) {
     console.log(error);
     console.error(error);
@@ -95,6 +102,47 @@ async function getProductReqById(req, res) {
   }
 }
 
+async function getProductReqByUserId(req, res) {
+  const userId = parseInt(req.params.userId, 10);
+
+  try {
+    // Tambahkan filter where berdasarkan userId pada saat mengambil data productReq
+    const productReq = await prisma.productReq.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        picture: true,
+        title: true,
+        price: true,
+        typeId: true,
+        desc: true,
+        serviceTypeId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (productReq.length > 0) {
+      successResponse(
+        res,
+        `Product requests for user ${userId} have been retrieved successfully`,
+        productReq,
+        200,
+      );
+    } else {
+      errorResponse(res, 'Product requests not found for the user', '', 404);
+    }
+  } catch (error) {
+    console.error(error);
+    errorResponse(res, 'An error occurred while fetching product request data', '', 500);
+  }
+}
+
 // Mendapatkan product request berdasarkan Status
 async function getProductReqByStatus(req, res) {
   const { status } = req.params;
@@ -105,6 +153,12 @@ async function getProductReqByStatus(req, res) {
         statusProductReq: status,
       },
       select: {
+        id: true,
+        picture: true,
+        title: true,
+        price: true,
+        typeId: true,
+        serviceTypeId: true,
         user: {
           select: {
             name: true,
@@ -113,7 +167,7 @@ async function getProductReqByStatus(req, res) {
       },
     });
 
-    if (productReq) {
+    if (productReq.length > 0) {
       successResponse(
         res,
         `Product request with status ${status} has been retrieved successfully`,
@@ -354,4 +408,5 @@ module.exports = {
   remove,
   acceptProductReq,
   rejectProductReq,
+  getProductReqByUserId,
 };

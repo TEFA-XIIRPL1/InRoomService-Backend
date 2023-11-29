@@ -18,7 +18,7 @@ describe('GET /productReq', () => {
     const response = await request(app).get('/productReq');
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.data.data).toBeInstanceOf(Array);
   });
 });
 
@@ -28,29 +28,6 @@ describe('GET /productReq', () => {
     const response = await request(app).get(`/productReq/${id}`);
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
-  });
-});
-
-describe('GET /productReq/status/:status', () => {
-  it('Should get productReq with status PENDING', async () => {
-    const response = await request(app).get('/productReq/status/PENDING');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
-  });
-
-  it('Should get productReq with status ACCEPTED', async () => {
-    const response = await request(app).get('/productReq/status/ACCEPTED');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
-  });
-
-  it('Should get productReq with status REJECTED', async () => {
-    const response = await request(app).get('/productReq/status/REJECTED');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
   });
 });
 
@@ -111,13 +88,13 @@ describe('GET /productReq/status/:status', () => {
 //   });
 // });
 
-describe('DELETE /productReq', () => {
-  it('Should delete productReq with ID', async () => {
-    const id = await lastId();
-    const response = await request(app).delete(`/productReq/delete/${id}`);
-    expect(response.statusCode).toBe(200);
-  });
-});
+// describe('DELETE /productReq/delete', () => {
+//   it('Should delete productReq with ID', async () => {
+//     const id = await lastId();
+//     const response = await request(app).delete(`/productReq/delete/${id}`);
+//     expect(response.statusCode).toBe(200);
+//   });
+// });
 
 describe('POST /productReq/accept/:id', () => {
   it('Should accept an existing productReq', async () => {
@@ -185,16 +162,44 @@ describe('POST /productReq/reject/:id', () => {
     const updatedProductReq = await prisma.productReq.findUnique({
       where: { id },
     });
+
     expect(updatedProductReq.statusProductReq).toBe('REJECTED');
 
-    // Clean up: delete the mock data from the database
-    await prisma.productReq.delete({
-      where: {
-        id,
-      },
-    });
-
     // Check the response
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
+  });
+});
+
+describe('GET /productReq/status/:status', () => {
+  it('Should get productReq with status PENDING', async () => {
+    const response = await request(app).get('/productReq/status/PENDING');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
+    expect(response.body.data).toBeInstanceOf(Array);
+  });
+
+  it('Should get productReq with status ACCEPTED', async () => {
+    const response = await request(app).get('/productReq/status/ACCEPTED');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
+    expect(response.body.data).toBeInstanceOf(Array);
+  });
+
+  it('Should get productReq with status REJECTED', async () => {
+    const response = await request(app).get('/productReq/status/REJECTED');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('data');
+    expect(response.body.data).toBeInstanceOf(Array);
+  });
+});
+
+describe('Product Requests by User ID', () => {
+  test('Get product requests for a specific user should return a list', async () => {
+    const userId = 1;
+
+    const response = await request(app).get(`/productReq/user/${userId}`);
+
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
   });

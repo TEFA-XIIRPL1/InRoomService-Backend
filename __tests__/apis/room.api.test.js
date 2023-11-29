@@ -8,7 +8,8 @@ app.use('/room', require('../../src/routes/room.route'));
 
 async function lastId() {
   const response = await request(app).get('/room');
-  const { data } = response.body;
+  const { data } = response.body.data;
+  console.log(data);
   return data[data.length - 1].id;
 }
 
@@ -17,7 +18,7 @@ describe('GET /room', () => {
     const response = await request(app).get('/room');
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.data.data).toBeInstanceOf(Array);
   });
 });
 

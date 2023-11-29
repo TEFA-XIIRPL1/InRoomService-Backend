@@ -13,6 +13,7 @@ const servicesRouter = require('./src/routes/services.route');
 const productReqRouter = require('./src/routes/productReq.route');
 const profileRouter = require('./src/routes/profile.route');
 const orderRouter = require('./src/routes/order.route');
+const subTypeRouter = require('./src/routes/subType.route');
 
 // configs
 const config = require('./src/configs/general.config');
@@ -32,6 +33,8 @@ app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
 app.use('/profile', profileRouter);
+app.use('/subType', subTypeRouter);
+app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 
 /* Error handler */

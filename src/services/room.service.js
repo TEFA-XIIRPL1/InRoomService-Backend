@@ -9,13 +9,20 @@ const {
   deleteAsset,
   getFilePath,
   generateAssetUrl,
+  paginate,
 } = require('../utils/helper.util');
 
 const app = Express();
 app.use(bodyParser.json());
 
 async function getAllData(req, res) {
-  const data = await prisma.room.findMany();
+  const { page } = req.query;
+  const { perPage } = req.query;
+  const { room } = prisma;
+  const data = await paginate(room, {
+    page,
+    perPage,
+  });
 
   if (!data) {
     return errorResponse(res, 'User not found', '', 404);

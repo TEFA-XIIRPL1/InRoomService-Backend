@@ -22,6 +22,7 @@ async function register(req, res) {
     const user = await prisma.user.create({
       data: {
         ...req.body,
+        picture: 'https://www.gravatar.com/avatar/?d=mp',
         password: bcrypt.hashSync(req.body.password, 10),
         roleId: 3,
       },
@@ -58,6 +59,7 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
+    console.log('test', req.body);
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         email: req.body.email,
