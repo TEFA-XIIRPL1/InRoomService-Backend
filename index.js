@@ -1,7 +1,5 @@
+// dependencies / libraries
 const express = require('express');
-const config = require('./src/configs/general.config');
-
-const port = config.port || 3000;
 const { configServer } = require('./src/configs/server.config');
 
 // middlewares
@@ -14,8 +12,12 @@ const authRouter = require('./src/routes/auth.route');
 const servicesRouter = require('./src/routes/services.route');
 const productReqRouter = require('./src/routes/productReq.route');
 const profileRouter = require('./src/routes/profile.route');
+const orderRouter = require('./src/routes/order.route');
 
-// server
+// configs
+const config = require('./src/configs/general.config');
+
+const port = config.port || 3000;
 const app = express();
 configServer(app);
 
@@ -24,17 +26,18 @@ app.get('/', (req, res) => {
   res.status(200).render('<p >Hello World</p>');
 });
 app.use('/auth', authRouter);
+app.use('/order', orderRouter);
 app.use(middleware(['Admin', 'Super Admin']));
 app.use('/room', roomRouter);
 app.use('/guest', guestRouter);
 app.use('/productReq', productReqRouter);
 app.use('/profile', profileRouter);
 app.use('/services', servicesRouter);
-/* Error handler middleware */
-app.use((req, res, err) => {
-  const statusCode = err.statusCode || 500;
-  console.error(err.message, err.stack);
-  res.status(statusCode).json({ message: err.message });
+
+/* Error handler */
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.log(err);
 });
 
 // logger

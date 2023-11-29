@@ -3,7 +3,9 @@ const { z } = require('zod');
 const crypto = require('crypto');
 const fs = require('fs');
 const multer = require('multer');
+const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library');
 const config = require('../configs/general.config');
+const { prisma } = require('../configs/prisma.config');
 
 function getOffset(listPerPage, currentPage = 1) {
   return (currentPage - 1) * [listPerPage];
@@ -70,6 +72,9 @@ function verifyToken(token) {
   }
 }
 
+/**
+ * @param {z.ZodSchema<object>} scheme
+ */
 function validate(scheme) {
   /**
    * @param {import('express').Request} req
@@ -185,7 +190,75 @@ function uploadFile(options, fieldName = 'image') {
 
 /* File End */
 
+/* Order Helper */
+
+/**
+ * @param { {serviceId:number, qty:number}[] } items
+ */
+async function generateSubtotal(items) {
+  let subTotal = 0;
+  /**
+   * @constant { {serviceId:number, qty:number} } item
+   */
+  for (const item of items) {
+    const service = await prisma.service.findUnique({
+      where: {
+        id: parseInt(item.serviceId, 10),
+      },
+    });
+    if (!service) {
+      const err = new PrismaClientKnownRequestError('Service not found', {
+        code: 'P2025',
+        meta: {
+          target: ['service id'],
+        },
+      });
+      throw err;
+    }
+    subTotal += service.price * item.qty;
+  }
+  return subTotal;
+}
+
+/**
+ * @param {number} subTotal
+ */
+function generateTotal(subTotal) {
+  const ppn = subTotal * 0.1;
+  const fees = 1000;
+  const total = subTotal + ppn + fees;
+
+  return total;
+}
+
+/**
+ * @param {number} id
+ * @param {number} qty
+ */
+
+async function generateItemPrice(id, qty) {
+  const service = await prisma.service.findUnique({
+    where: {
+      id: parseInt(id, 10),
+    },
+  });
+  if (!service)
+    throw new PrismaClientKnownRequestError('Service not found', {
+      code: 'P2025',
+      meta: {
+        target: ['id'],
+      },
+    });
+
+  return service.price * parseInt(qty, 10);
+}
+
+/* Order Helper End */
+
 module.exports = {
+  generateItemPrice,
+  generateSubtotal,
+  generateTotal,
   uploadFile,
   setFileFilter,
   setStorage,
