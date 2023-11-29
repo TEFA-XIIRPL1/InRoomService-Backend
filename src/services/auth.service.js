@@ -22,6 +22,7 @@ async function register(req, res) {
     const user = await prisma.user.create({
       data: {
         ...req.body,
+        picture: 'https://www.gravatar.com/avatar/?d=mp',
         password: bcrypt.hashSync(req.body.password, 10),
         roleId: parseInt(req.body.roleId, 10),
       },
