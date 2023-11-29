@@ -58,9 +58,9 @@ enum ArrangmentCode {
 
 model Guest {
   id       Int          @id @default(autoincrement())
-  name     String
-  contact  String
-  username String
+  name     String?
+  contact  String?
+  username String       @unique
   password String
   Tokens   GuestToken[]
   orders   Order[]
@@ -191,8 +191,10 @@ model Reservation {
   reserverId         Int
   manyAdult          Int
   manyChild          Int
+  manyBaby           Int
+  manyNight          Int
   reservationRemarks String?           @db.Text
-  inHouseIndicator   Boolean
+  inHouseIndicator   Boolean?          @default(false)
   arrivalDate        DateTime          @db.Date
   departureDate      DateTime          @db.Date
   checkInDate        DateTime?         @db.Date
@@ -238,14 +240,13 @@ model ResvRoom {
 }
 
 model Reserver {
-  id              Int           @id @default(autoincrement())
-  guestIdentifier String
-  resourceName    String
-  guest           Guest         @relation(fields: [guestId], references: [id])
-  guestId         Int
-  reservations    Reservation[]
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
+  id           Int           @id @default(autoincrement())
+  guest        Guest         @relation(fields: [guestId], references: [id])
+  guestId      Int
+  resourceName String
+  reservations Reservation[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
 }
 
 model LogAvailability {
@@ -365,21 +366,18 @@ model ServiceType {
   open       String
   close      String
   services   Service[]
-  subTypes   SubType[]
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
   ProductReq ProductReq[]
 }
 
 model SubType {
-  id            Int          @id @default(autoincrement())
-  name          String
-  serviceType   ServiceType  @relation(fields: [serviceTypeId], references: [id])
-  serviceTypeId Int
-  services      Service[]
-  productReqs   ProductReq[]
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @updatedAt
+  id          Int          @id @default(autoincrement())
+  name        String
+  services    Service[]
+  productReqs ProductReq[]
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
 }
 
 model Service {
@@ -435,34 +433,35 @@ model Payment {
   updated_at      DateTime      @updatedAt
 }
 
+model Order {
+  id           String        @id @default(uuid())
+  guest        Guest         @relation(fields: [guestId], references: [id])
+  guestId      Int
+  room         Room          @relation(fields: [roomId], references: [id])
+  roomId       Int
+  subtotal     Float
+  total        Float
+  ppn          Float
+  fees         Float
+  transaction  Transaction?
+  orderDetails OrderDetail[]
+  orderTracks  OrderTrack[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+}
+
 model Transaction {
   id         String        @id
   name       String
   status     PaymentStatus
   payment    Payment       @relation(fields: [paymentId], references: [id])
   paymentId  Int
-  order      Order?
+  order      Order         @relation(fields: [orderId], references: [id])
+  orderId    String        @unique
+  qrCode     String?
   created_at DateTime      @default(now())
   expired_at DateTime?
   updated_at DateTime      @updatedAt
-}
-
-model Order {
-  id            String        @id
-  guest         Guest         @relation(fields: [guestId], references: [id])
-  guestId       Int
-  room          Room          @relation(fields: [roomId], references: [id])
-  roomId        Int
-  subtotal      Float
-  total         Float
-  ppn           Float
-  fees          Float
-  transaction   Transaction   @relation(fields: [transactionId], references: [id])
-  transactionId String        @unique
-  orderDetails  OrderDetail[]
-  orderTracks   OrderTrack[]
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
 }
 
 model OrderTrack {
