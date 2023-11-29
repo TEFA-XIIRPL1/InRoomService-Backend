@@ -77,7 +77,7 @@ const createService = async (req, res) => {
     const decoded = verifyToken(accessToken);
     const { name, price, desc, serviceTypeId, subTypeId } = req.body;
     const picture = req.file.filename;
-    const pictureUrl = `${process.env.BASE_URL}/uploads/${picture}`;
+    const pictureUrl = generateAssetUrl(picture);
     const service = await prisma.service.create({
       data: {
         userId: decoded.role.name === 'MITRA' ? decoded.id : 1,
