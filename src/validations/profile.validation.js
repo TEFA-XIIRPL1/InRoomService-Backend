@@ -9,6 +9,14 @@ const phoneInputScheme = z.object({
   }),
 });
 
+const imageInputScheme = z.object({
+  body: z.object({
+    picture: z.unknown({
+      required_error: 'Image is required',
+    }),
+  }),
+});
+
 const emailInputScheme = z.object({
   body: z.object({
     email: z.string({
@@ -28,5 +36,6 @@ const nikInputScheme = z.object({
 const phoneValidation = validate(phoneInputScheme);
 const emailValidation = validate(emailInputScheme);
 const nikValidation = validate(nikInputScheme);
+const imageValidation = validate(imageInputScheme);
 
-module.exports = { phoneValidation, emailValidation, nikValidation };
+module.exports = { phoneValidation, emailValidation, nikValidation, imageValidation };

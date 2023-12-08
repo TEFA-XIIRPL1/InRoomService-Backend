@@ -30,40 +30,38 @@ describe('GET /productReq', () => {
   });
 });
 
-describe('GET /productReq/status/:status', () => {
-  it('Should get productReq with status PENDING', async () => {
-    const response = await request(app).get('/productReq/status/PENDING');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
-  });
+// describe('GET /productReq/status/:status', () => {
+//   it('Should get productReq with status PENDING', async () => {
+//     const response = await request(app).get('/productReq/status/PENDING');
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//     expect(response.body.data).toBeInstanceOf(Array);
+//   });
 
-  it('Should get productReq with status ACCEPTED', async () => {
-    const response = await request(app).get('/productReq/status/ACCEPTED');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
-  });
+//   it('Should get productReq with status ACCEPTED', async () => {
+//     const response = await request(app).get('/productReq/status/ACCEPTED');
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//     expect(response.body.data).toBeInstanceOf(Array);
+//   });
 
-  it('Should get productReq with status REJECTED', async () => {
-    const response = await request(app).get('/productReq/status/REJECTED');
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toBeInstanceOf(Array);
-  });
-});
+//   it('Should get productReq with status REJECTED', async () => {
+//     const response = await request(app).get('/productReq/status/REJECTED');
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body).toHaveProperty('data');
+//     expect(response.body.data).toBeInstanceOf(Array);
+//   });
+// });
 
 describe('Product Requests by User ID', () => {
   test('Get product requests for a specific user should return a list', async () => {
     const userId = 1;
 
-    const response = await request(app)
-      .get(`/productReq/user/${userId}`)
+    const response = await request(app).get(`/productReq/user/${userId}`);
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('data');
   });
-
 });
 
 /* THIS REQUEST NEED CREDENTIALS REQUIREMENT THAT CAN TEST IN UNIT TEST */

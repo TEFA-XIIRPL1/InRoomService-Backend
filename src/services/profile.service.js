@@ -8,6 +8,7 @@ const {
   successResponse,
   verifyToken,
   getAccessToken,
+  deleteAsset,
 } = require('../utils/helper.util');
 
 const app = Express();
@@ -46,6 +47,45 @@ async function getData(req, res) {
   }
 }
 
+async function updateImage(req, res) {
+  try {
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
+    const newFilesaved = req.file.filename;
+    const newPictureUrl = `${process.env.BASE_URL}/public/assets/images/${newFilesaved}`;
+
+    const data = await prisma.user.update({
+      where: {
+        id: decoded.id,
+      },
+      data: {
+        picture: newPictureUrl,
+      },
+      select: {
+        id: true,
+        name: true,
+        picture: true,
+        phone: true,
+        email: true,
+        nik: true,
+        gender: true,
+        birthday: true,
+      },
+    });
+
+    const oldPictureUrl = data.picture;
+    const oldFilesaved = oldPictureUrl.split('/').pop();
+    console.log(oldFilesaved);
+    const oldPicturePath = `./public/assets/images/${oldFilesaved}`;
+    deleteAsset(oldPicturePath);
+
+    return successResponse(res, 'Picture updated successfully', data, 200);
+  } catch (error) {
+    console.error('Error in updateNumber:', error);
+    return errorResponse(res, 'Internal server error', '', 500);
+  }
+}
+
 async function updateNumber(req, res) {
   try {
     const { phone } = req.body;
@@ -61,6 +101,7 @@ async function updateNumber(req, res) {
       select: {
         id: true,
         name: true,
+        picture: true,
         phone: true,
         email: true,
         nik: true,
@@ -91,6 +132,7 @@ async function updateEmail(req, res) {
       select: {
         id: true,
         name: true,
+        picture: true,
         phone: true,
         email: true,
         nik: true,
@@ -121,6 +163,7 @@ async function updateNIK(req, res) {
       select: {
         id: true,
         name: true,
+        picture: true,
         phone: true,
         email: true,
         nik: true,
@@ -138,6 +181,7 @@ async function updateNIK(req, res) {
 
 module.exports = {
   getData,
+  updateImage,
   updateNumber,
   updateEmail,
   updateNIK,
