@@ -12,7 +12,7 @@ function getOffset(listPerPage, currentPage = 1) {
 }
 
 function paginator(defaultOptions) {
-  return async function (model, options, args = { where: undefined }) {
+  return async (model, options, args = { where: undefined }) => {
     try {
       const page = Number(options?.page || defaultOptions.page) || 1;
       const perPage = Number(options?.perPage || defaultOptions.perPage) || 10;
@@ -235,15 +235,18 @@ function uploadFile(options, fieldName = 'image') {
  */
 async function generateSubtotal(items) {
   let subTotal = 0;
-  /**
-   * @constant { {serviceId:number, qty:number} } item
-   */
-  for (const item of items) {
-    const service = await prisma.service.findUnique({
-      where: {
-        id: parseInt(item.serviceId, 10),
+
+  const services = await prisma.service.findMany({
+    where: {
+      id: {
+        in: items.map((item) => parseInt(item.serviceId, 10)),
       },
-    });
+    },
+  });
+
+  for (const item of items) {
+    const service = services.find((s) => s.id === parseInt(item.serviceId, 10));
+
     if (!service) {
       const err = new PrismaClientKnownRequestError('Service not found', {
         code: 'P2025',
@@ -253,8 +256,10 @@ async function generateSubtotal(items) {
       });
       throw err;
     }
-    subTotal += service.price * item.qty;
+
+    subTotal += service.price * parseInt(item.qty, 10);
   }
+
   return subTotal;
 }
 
