@@ -10,4 +10,5 @@ module.exports = {
   cryptoSecret: process.env.CRYPTO_SECRET_KEY,
   cryptoIv: process.env.CRYPTO_IV,
   port: process.env.PORT,
+  paymentPrivateKey: process.env.PAYMENT_PRIVATE_KEY,
 };

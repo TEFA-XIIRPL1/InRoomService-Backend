@@ -12,7 +12,7 @@ function getOffset(listPerPage, currentPage = 1) {
 }
 
 function paginator(defaultOptions) {
-  return async function (model, options, args = { where: undefined }) {
+  return async (model, options, args = { where: undefined }) => {
     try {
       const page = Number(options?.page || defaultOptions.page) || 1;
       const perPage = Number(options?.perPage || defaultOptions.perPage) || 10;
@@ -126,6 +126,7 @@ function validate(scheme) {
         query: req.query,
         params: req.params,
       });
+
       return next();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -235,15 +236,18 @@ function uploadFile(options, fieldName = 'image') {
  */
 async function generateSubtotal(items) {
   let subTotal = 0;
-  /**
-   * @constant { {serviceId:number, qty:number} } item
-   */
-  for (const item of items) {
-    const service = await prisma.service.findUnique({
-      where: {
-        id: parseInt(item.serviceId, 10),
+
+  const services = await prisma.service.findMany({
+    where: {
+      id: {
+        in: items.map((item) => parseInt(item.serviceId, 10)),
       },
-    });
+    },
+  });
+
+  for (const item of items) {
+    const service = services.find((s) => s.id === parseInt(item.serviceId, 10));
+
     if (!service) {
       const err = new PrismaClientKnownRequestError('Service not found', {
         code: 'P2025',
@@ -253,8 +257,10 @@ async function generateSubtotal(items) {
       });
       throw err;
     }
-    subTotal += service.price * item.qty;
+
+    subTotal += service.price * parseInt(item.qty, 10);
   }
+
   return subTotal;
 }
 
@@ -291,9 +297,32 @@ async function generateItemPrice(id, qty) {
   return service.price * parseInt(qty, 10);
 }
 
+/**
+ *
+ * @param { string } payload
+ * @param { 'POST' || 'GET' || 'PUT' } method
+ * @param { string } url
+ */
+function generateSignature(payload, method, url) {
+  // minify payload
+  const minifyPayload = JSON.stringify(payload).toLocaleLowerCase().trim();
+  const sha256Payload = crypto.createHash('sha256').update(minifyPayload).digest('base64');
+
+  // stringContent
+  const stringContent = `${method}:${url}:${sha256Payload}:${new Date()}`;
+
+  //  Base64(SHA256withRSA(stringContent, privateKey))
+  const signature = crypto
+    .createSign('RSA-SHA256')
+    .update(stringContent)
+    .sign(config.paymentPrivateKey, 'base64');
+
+  return signature;
+}
 /* Order Helper End */
 
 module.exports = {
+  generateSignature,
   generateItemPrice,
   generateSubtotal,
   generateTotal,
