@@ -17,6 +17,41 @@ const {
   errorResponse,
 } = require('../utils/helper.util');
 const { prismaError } = require('../utils/errors.util');
+/**
+ *
+ * @param {import ('express').Request} req
+ * @param {import ('express').Response} res
+ */
+
+async function findOne(req, res) {
+  try {
+    const accessToken = getAccessToken(req);
+    const decoded = verifyToken(accessToken);
+    console.log(decoded);
+    const { id } = req.params;
+    const order = await prisma.order.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        orderDetails: {
+          include: {
+            service: true,
+          },
+        },
+      },
+    });
+    if (!order) {
+      return errorResponse(res, 'Order not found', 'Order not found', 404);
+    }
+    return successResponse(res, 'Order retreived successfully', order, 200);
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      return prismaError(error, error.meta?.cause, res);
+    }
+    return errorResponse(res, 'Internal server error', error.message, 500);
+  }
+}
 
 /**
  *
@@ -273,4 +308,5 @@ module.exports = {
   updateQty,
   updateNewItem,
   remove,
+  findOne,
 };
