@@ -453,7 +453,7 @@ model Order {
 }
 
 model Transaction {
-  id         String        @id
+  id         String        @id @default(uuid())
   name       String
   status     PaymentStatus
   payment    Payment       @relation(fields: [paymentId], references: [id])
