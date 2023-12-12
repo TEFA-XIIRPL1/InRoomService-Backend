@@ -126,6 +126,7 @@ function validate(scheme) {
         query: req.query,
         params: req.params,
       });
+
       return next();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -296,9 +297,32 @@ async function generateItemPrice(id, qty) {
   return service.price * parseInt(qty, 10);
 }
 
+/**
+ *
+ * @param { string } payload
+ * @param { 'POST' || 'GET' || 'PUT' } method
+ * @param { string } url
+ */
+function generateSignature(payload, method, url) {
+  // minify payload
+  const minifyPayload = JSON.stringify(payload).toLocaleLowerCase().trim();
+  const sha256Payload = crypto.createHash('sha256').update(minifyPayload).digest('base64');
+
+  // stringContent
+  const stringContent = `${method}:${url}:${sha256Payload}:${new Date()}`;
+
+  //  Base64(SHA256withRSA(stringContent, privateKey))
+  const signature = crypto
+    .createSign('RSA-SHA256')
+    .update(stringContent)
+    .sign(config.paymentPrivateKey, 'base64');
+
+  return signature;
+}
 /* Order Helper End */
 
 module.exports = {
+  generateSignature,
   generateItemPrice,
   generateSubtotal,
   generateTotal,
