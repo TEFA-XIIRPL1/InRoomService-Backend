@@ -1,5 +1,6 @@
 // dependencies / libraries
 const express = require('express');
+const path = require('path');
 const { configServer } = require('./src/configs/server.config');
 
 // middlewares
@@ -20,6 +21,8 @@ const config = require('./src/configs/general.config');
 
 const port = config.port || 3000;
 const app = express();
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
 configServer(app);
 
 // endpoint

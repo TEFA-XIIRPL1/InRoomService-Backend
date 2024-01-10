@@ -1,5 +1,3 @@
-const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -7,20 +5,30 @@ const cors = require('cors');
  * @param {import('express').Application} app
  */
 const configServer = (app) => {
-  app.use('/public', express.static(path.join(__dirname, 'public')));
   app.use(bodyParser.json());
   app.use(cookieParser());
-  app.use(cors());
+  // const whitelist = ['http://localhost:8080'];
+  // const corsOptions = {
+  //   origin: (origin, callback) => {
+  //     if (whitelist.indexOf(origin) !== -1 || !origin) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error('Not allowed by CORS'));
+  //     }
+  //   },
+  // };
+
+  const origins = 'http://localhost:3000' || [];
+
+  app.use(
+    cors({
+      origin: origins.split(','),
+      credentials: true,
+    }),
+  );
   app.use(
     bodyParser.urlencoded({
       extended: true,
-    }),
-  );
-  // cors
-  app.use(
-    cors({
-      credentials: true,
-      origin: ['*', 'http://localhost:3000'],
     }),
   );
 };
