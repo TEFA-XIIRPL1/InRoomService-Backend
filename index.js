@@ -1,11 +1,7 @@
-// dependencies / libraries
 const express = require('express');
+const cors = require('cors');
 const { configServer } = require('./src/configs/server.config');
-
-// middlewares
 const middleware = require('./src/middlewares/auth.middleware');
-
-// routers
 const roomRouter = require('./src/routes/room.route');
 const guestRouter = require('./src/routes/guest.route');
 const authRouter = require('./src/routes/auth.route');
@@ -14,18 +10,26 @@ const productReqRouter = require('./src/routes/productReq.route');
 const profileRouter = require('./src/routes/profile.route');
 const orderRouter = require('./src/routes/order.route');
 const subTypeRouter = require('./src/routes/subType.route');
-
-// configs
 const config = require('./src/configs/general.config');
 
-const port = config.port || 3000;
+const port = config.port || 9000;
 const app = express();
+
+// Use cors middleware to handle CORS headers
+app.use(cors({
+  origin: 'http://localhost:9000',
+  credentials: true,
+}));
+
+// Handle preflight OPTIONS requests
+app.options('*', cors());
+
 configServer(app);
 
-// endpoint
 app.get('/', (req, res) => {
-  res.status(200).render('<p >Hello World</p>');
+  res.status(200).send('<p>Hello World</p>');
 });
+
 app.use('/auth', authRouter);
 app.use('/order', orderRouter);
 app.use(middleware(['Admin', 'Super Admin']));
@@ -38,13 +42,14 @@ app.use('/guest', guestRouter);
 app.use('/services', servicesRouter);
 
 /* Error handler */
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  console.log(err);
+app.use((err, req, res) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// logger
 app.listen(port, (err) => {
-  if (err) console.error(err);
-  console.log(`listening at http://localhost:${port}`);
+  if (err) {
+    console.error(err);
+  }
+  console.log(`Listening at http://localhost:${port}`);
 });

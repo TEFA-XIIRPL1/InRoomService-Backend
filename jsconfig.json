@@ -3,7 +3,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "target": "ES2020",
-    "allowImportingTsExtensions": true,
+    // "allowImportingTsExtensions": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true
   },
